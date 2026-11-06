@@ -273,6 +273,22 @@
   .crown-drop.glow { filter: drop-shadow(0 0 28px rgba(255,210,63,.95)) drop-shadow(0 0 60px rgba(255,190,0,.6)); }
   #fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 30; }
   #spot { position: fixed; inset: 0; z-index: 29; pointer-events: none; opacity: 0; }
+  .shout { position: fixed; z-index: 31; pointer-events: none; padding: .32em .75em; border-radius: 18px; font-weight: 900; font-size: clamp(22px, 3.8vh, 38px); letter-spacing: -.01em; white-space: nowrap; box-shadow: 0 12px 30px rgba(0,0,0,.45); }
+  .shout::after { content: ""; position: absolute; left: 28%; bottom: -11px; border: 12px solid transparent; border-top-color: var(--bg); border-bottom: 0; }
+  .megaphone { position: fixed; top: 42%; z-index: 31; pointer-events: none; font-size: clamp(70px, 15vh, 130px); line-height: 1; filter: drop-shadow(0 10px 20px rgba(0,0,0,.5)); }
+  .crowd { position: fixed; left: 0; right: 0; bottom: -1vh; height: 26vh; z-index: 31; pointer-events: none; display: flex; justify-content: space-evenly; align-items: flex-end; overflow: hidden; }
+  .crowd span { display: block; font-size: clamp(64px, 15vh, 128px); line-height: 1; transform: translateY(105%); filter: drop-shadow(0 6px 16px rgba(0,0,0,.55)); }
+  .disco { position: fixed; inset: 0; z-index: 29; pointer-events: none; overflow: hidden; background: rgba(3,7,16,.5); opacity: 0; }
+  .disco .beams { position: absolute; left: 50%; top: 11vh; width: 260vmax; height: 260vmax; transform: translate(-50%, -50%); mix-blend-mode: screen;
+    background: repeating-conic-gradient(from 0deg, rgba(255,64,160,.22) 0deg 5deg, transparent 5deg 20deg, rgba(64,200,255,.22) 20deg 25deg, transparent 25deg 40deg, rgba(255,214,64,.2) 40deg 45deg, transparent 45deg 60deg); }
+  .disco .ball { position: absolute; left: 50%; top: 0; padding-top: 4vh; transform: translateY(-130%); font-size: clamp(70px, 13vh, 120px); line-height: 1; margin-left: -.5em; }
+  .disco .ball::before { content: ""; position: absolute; left: 50%; top: 0; width: 2px; height: 4.2vh; background: rgba(255,255,255,.5); }
+  .disco .ball span { display: block; animation: ballSpin 1.2s ease-in-out infinite alternate; filter: drop-shadow(0 0 24px rgba(255,255,255,.6)); }
+  @keyframes ballSpin { from { transform: rotate(-12deg); } to { transform: rotate(12deg); } }
+  .disco .dancer { position: absolute; bottom: 3vh; font-size: clamp(70px, 15vh, 130px); line-height: 1; animation: groove .42s ease-in-out infinite alternate; }
+  .disco .dancer.l { left: 4vw; }
+  .disco .dancer.r { right: 4vw; animation-delay: -.21s; }
+  @keyframes groove { from { transform: translateY(0) rotate(-8deg); } to { transform: translateY(-16%) rotate(8deg); } }
   #spot .beam { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,244,214,.20), rgba(255,244,214,.05)); mix-blend-mode: screen; filter: blur(10px); }
 
   @media (max-width: 900px) {
@@ -505,13 +521,13 @@
   function noise(start, dur, vol, type = 'bandpass', freq = 1500, q = 1) {
     if (!soundOn || !audio) return;
     if (!noiseBuf) {
-      noiseBuf = audio.createBuffer(1, audio.sampleRate, audio.sampleRate);
+      noiseBuf = audio.createBuffer(1, audio.sampleRate * 2, audio.sampleRate);
       const ch = noiseBuf.getChannelData(0);
       for (let i = 0; i < ch.length; i++) ch[i] = Math.random() * 2 - 1;
     }
     const t = audio.currentTime + start;
     const src = audio.createBufferSource(), f = audio.createBiquadFilter(), g = audio.createGain();
-    src.buffer = noiseBuf; f.type = type; f.frequency.value = freq; f.Q.value = q;
+    src.buffer = noiseBuf; src.loop = true; f.type = type; f.frequency.value = freq; f.Q.value = q;
     g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
     src.connect(f).connect(g).connect(audio.destination);
     src.start(t, rand() * 0.8); src.stop(t + dur + 0.02);
@@ -522,6 +538,18 @@
   const pop = () => noise(0, 0.14, 0.5, 'bandpass', 800, 0.8);
   const partyHorn = () => { glide(300, 560, 0.05, 0.28, 0.06, 'sawtooth'); glide(560, 320, 0.36, 0.3, 0.05, 'sawtooth'); };
   const shimmer = () => [784, 988, 1175, 1568].forEach((f, i) => tone(f, i * 0.07, 0.7, 0.07, 'triangle'));
+  const cheer = secs => {                       // a crowd roar with a few rising "woo"s on top
+    noise(0, secs, 0.1, 'bandpass', 900, 0.6);
+    for (let i = 0; i < 9; i++) { const f = 260 + rand() * 260; glide(f, f * 1.9, rand() * secs * 0.6, 0.45 + rand() * 0.3, 0.022, 'triangle'); }
+  };
+  const discoBeat = beats => {                  // kick on the beat, hi-hat off the beat, a chord stab every other beat
+    for (let i = 0; i < beats; i++) {
+      const t = i * 0.42;
+      glide(150, 45, t, 0.28, 0.45);
+      noise(t + 0.21, 0.04, 0.08, 'highpass', 7000);
+      if (i % 2) [523, 659, 784].forEach(f => tone(f, t, 0.14, 0.035, 'square'));
+    }
+  };
 
   // ---- Wheel --------------------------------------------------------------
   function sizeCanvas() {
@@ -643,7 +671,8 @@
 
   // ---- Celebrations -------------------------------------------------------
   // Dave always gets the crown drop. Everyone else gets one of these, and nobody
-  // gets the same one twice in a row: confetti, fireworks, spotlight, applause, party.
+  // gets the same one twice in a row: confetti, fireworks, spotlight, applause, party,
+  // shouting, standing ovation and disco.
   const fx = $('fx'), fctx = fx.getContext('2d');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const PARTY = ['#0CA0E2', '#1AE50A', '#FF9515', '#FF0600', '#887AF9', '#1192ef', '#ffd23f'];
@@ -842,12 +871,140 @@
     }, 150 + i * 110);
   }
 
-  const EFFECTS = { confetti, fireworks, spotlight, applause, party };
+  // A speech bubble that pops in at (cx, y), wobbles, then floats away.
+  function bubble(text, cx, y, bg, dur = 2600) {
+    const b = document.createElement('div'); b.className = 'shout'; b.textContent = text;
+    b.style.background = bg; b.style.color = textOn(bg); b.style.setProperty('--bg', bg);
+    b.style.top = y + 'px';
+    document.body.append(b);
+    b.style.left = Math.max(8, Math.min(innerWidth - b.offsetWidth - 8, cx - b.offsetWidth / 2)) + 'px';
+    const r = (rand() - 0.5) * 16;
+    const at = (s, d, lift = 0) => `translateY(${lift}px) scale(${s}) rotate(${r + d}deg)`;
+    b.animate([
+      { transform: at(0, -20), opacity: 0 },
+      { transform: at(1.18, 4), opacity: 1, offset: 0.08 },
+      { transform: at(1, 0), offset: 0.14 },
+      { transform: at(1.05, -3), offset: 0.3 },
+      { transform: at(1, 2), offset: 0.46 },
+      { transform: at(1.05, -2), offset: 0.62 },
+      { transform: at(1, 0), opacity: 1, offset: 0.84 },
+      { transform: at(0.7, 0, -24), opacity: 0 },
+    ], { duration: dur, easing: 'ease-out', fill: 'forwards' });
+    setTimeout(() => b.remove(), dur + 80);   // a timer, so it also goes if the tab was in the background
+  }
+  // 6. Shouting: hype in speech bubbles all over the screen, megaphones on both sides.
+  function shouting(p) {
+    if (reduceMotion) return;
+    const name = p.name.toUpperCase(), W = innerWidth, H = innerHeight;
+    const SHOUTS = ['WOOO!', "LET'S GO!", 'YEAH!', `GO ${name}!`, 'WHOOP WHOOP!', '🔥🔥🔥', 'LEGEND!', `${name}!!`, 'YESSS!', 'HYPE! 🙌'];
+    const lines = [...SHOUTS].sort(() => rand() - 0.5).slice(0, 8);
+    const COLORS = [p.color, '#ffffff', '#ffd23f'];
+    lines.forEach((text, i) => setTimeout(() => {
+      const col = i % 4, row = Math.floor(i / 4);   // a loose 4 x 2 grid so bubbles don't pile up
+      bubble(text, W * (0.14 + col * 0.24 + (rand() - 0.5) * 0.08), H * (0.12 + row * 0.44 + rand() * 0.2), COLORS[i % 3]);
+    }, i * 150));
+    [['left', 1], ['right', -1]].forEach(([side, dir]) => {
+      const m = document.createElement('div'); m.className = 'megaphone'; m.textContent = '📣';
+      m.style[side] = '0';
+      document.body.append(m);
+      const flip = dir === 1 ? -1 : 1;   // the emoji faces left, so flip the left one to face in
+      const at = (x, rot) => `translateX(${x}%) scaleX(${flip}) rotate(${rot * dir}deg)`;
+      m.animate([
+        { transform: at(-dir * 140, 0) },
+        { transform: at(0, -10), offset: 0.12, easing: 'ease-out' },
+        { transform: at(0, 6), offset: 0.2 }, { transform: at(0, -8), offset: 0.28 },
+        { transform: at(0, 6), offset: 0.36 }, { transform: at(0, -8), offset: 0.44 },
+        { transform: at(0, 6), offset: 0.52 }, { transform: at(0, -6), offset: 0.6 },
+        { transform: at(0, 0), offset: 0.85 },
+        { transform: at(-dir * 140, 0) },
+      ], { duration: 2900, easing: 'ease-in-out', fill: 'forwards' });
+      setTimeout(() => m.remove(), 2980);
+      setTimeout(() => {
+        const x = dir === 1 ? 110 : W - 110;
+        cannon(x, H * 0.5, dir === 1 ? -0.3 : -Math.PI + 0.3, 0.9, ['🔥', '💥', '❗', '#ffd23f', p.color], 18, 12);
+      }, 380);
+    });
+    cheer(2.2);
+  }
+  // 7. Standing ovation: the audience rises from the bottom, claps and throws roses.
+  function ovation(p) {
+    if (reduceMotion) return;
+    const PEOPLE = ['🧍', '🧍‍♀️', '🧍‍♂️', '🧍🏽', '🧍🏻‍♀️', '🧍🏾‍♂️', '🙋', '🙋🏽‍♂️', '🧍🏼‍♀️', '🙋🏻‍♀️', '🧍🏿', '🙋🏾'];
+    const W = innerWidth, H = innerHeight, DUR = 4300;
+    const row = document.createElement('div'); row.className = 'crowd';
+    const people = [];
+    for (let i = 0, n = Math.max(7, Math.round(W / 105)); i < n; i++) {
+      const s = document.createElement('span'); s.textContent = pick(PEOPLE); row.append(s); people.push(s);
+    }
+    document.body.append(row);
+    people.forEach(s => {
+      const d = rand() * 0.12, up = 0.1 + d;    // everyone stands up at a slightly different moment
+      s.animate([
+        { transform: 'translateY(105%)', offset: 0 },
+        { transform: 'translateY(105%)', offset: d },
+        { transform: 'translateY(-6%)', offset: up },
+        { transform: 'translateY(0)', offset: up + 0.05 },
+        { transform: 'translateY(-10%)', offset: up + 0.15 },
+        { transform: 'translateY(0)', offset: up + 0.25 },
+        { transform: 'translateY(-10%)', offset: up + 0.35 },
+        { transform: 'translateY(0)', offset: up + 0.45 },
+        { transform: 'translateY(0)', offset: 0.86 },
+        { transform: 'translateY(105%)', offset: 1 },
+      ], { duration: DUR, easing: 'ease-out', fill: 'forwards' });
+    });
+    setTimeout(() => row.remove(), DUR + 60);
+    for (let k = 0; k < 26; k++) setTimeout(() => {       // clapping hands above their heads
+      const r = pick(people).getBoundingClientRect();
+      add({ kind: 'emoji', color: '👏', x: r.left + r.width / 2, y: r.top, vx: (rand() - 0.5) * 1.5, vy: -(4 + rand() * 3),
+        g: 0.08, drag: 0.99, sway: 0.4, life: 1, decay: 0.02, size: 24 + rand() * 12, upright: true, pulse: true });
+      runFx();
+    }, 550 + k * 110);
+    const sp = $('speaker').getBoundingClientRect(), tx = sp.left + sp.width / 2, ty = sp.top + sp.height / 2;
+    for (let k = 0; k < 8; k++) setTimeout(() => {        // roses thrown onto the stage
+      const sx = W * (0.08 + 0.84 * rand()), sy = H - 70, T = 48 + rand() * 16, a = 0.32;
+      add({ kind: 'emoji', color: '🌹', x: sx, y: sy, vx: (tx - sx) / T, vy: (ty - sy) / T - 0.5 * a * T,
+        g: 1, drag: 1, sway: 0, size: 30 + rand() * 10, vr: 0.5 + rand() * 0.4 });
+      runFx();
+    }, 900 + k * 150);
+    setTimeout(() => bubble('BRAVO! 👏', tx, Math.max(8, sp.top - 76), '#ffd23f', 2800), 700);
+    clapping(3.6); cheer(2.4);
+  }
+  // 8. Disco: a mirror ball drops in, coloured lights sweep the room and two dancers groove.
+  function disco(p) {
+    if (reduceMotion) return;
+    const DUR = 4200, DISCO = ['#ff40a0', '#40c8ff', '#ffd640', '#a070ff', '#ffffff', p.color];
+    const room = document.createElement('div'); room.className = 'disco';
+    room.innerHTML = '<div class="beams"></div><div class="ball"><span>🪩</span></div><div class="dancer l">💃</div><div class="dancer r">🕺</div>';
+    document.body.append(room);
+    room.animate([{ opacity: 0 }, { opacity: 1, offset: 0.08 }, { opacity: 1, offset: 0.86 }, { opacity: 0 }],
+      { duration: DUR, fill: 'forwards' });
+    setTimeout(() => room.remove(), DUR + 80);
+    room.querySelector('.beams').animate([{ transform: 'translate(-50%, -50%) rotate(0deg)' }, { transform: 'translate(-50%, -50%) rotate(150deg)' }],
+      { duration: DUR, easing: 'linear', fill: 'forwards' });
+    const ball = room.querySelector('.ball');
+    ball.animate([
+      { transform: 'translateY(-130%)' }, { transform: 'translateY(0)', offset: 0.16, easing: 'ease-out' },
+      { transform: 'translateY(-7%)', offset: 0.22 }, { transform: 'translateY(0)', offset: 0.28 },
+      { transform: 'translateY(0)', offset: 0.86 }, { transform: 'translateY(-130%)' },
+    ], { duration: DUR, fill: 'forwards' });
+    for (let k = 0; k < 44; k++) setTimeout(() => {       // light rays thrown off the mirror ball
+      const r = ball.querySelector('span').getBoundingClientRect();
+      for (let j = 0; j < 3; j++) {
+        const a = 0.15 + rand() * (Math.PI - 0.3), s = 7 + rand() * 5;
+        add({ kind: 'spark', x: r.left + r.width / 2, y: r.top + r.height / 2, vx: Math.cos(a) * s, vy: Math.sin(a) * s,
+          g: 0, drag: 1, sway: 0, life: 1, decay: 0.022, color: pick(DISCO), r: 1.5 });
+      }
+      runFx();
+    }, 700 + k * 60);
+    discoBeat(9);
+  }
+
+  const EFFECTS = { confetti, fireworks, spotlight, applause, party, shouting, ovation, disco };
   const forcedFx = new URLSearchParams(location.search).get('fx');   // e.g. ?fx=fireworks to preview one
   let fxBag = [], lastFx = null;
   function nextEffect() {
     if (EFFECTS[forcedFx]) return forcedFx;
-    if (!fxBag.length) {                       // shuffle all five, so a round rarely repeats one
+    if (!fxBag.length) {                       // shuffle them all, so a round never repeats one
       fxBag = Object.keys(EFFECTS).sort(() => rand() - 0.5);
       if (fxBag[fxBag.length - 1] === lastFx) fxBag.unshift(fxBag.pop());
     }
