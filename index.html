@@ -3,187 +3,164 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#070d1a">
 <title>EonX Cloud Team Daily Stand Up</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%231192ef'/%3E%3Cpath d='M16 16 L16 4 A12 12 0 0 1 26.4 10 Z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%22125%20-4%2050%2048%22%3E%3Crect%20x%3D%22125%22%20y%3D%22-4%22%20width%3D%2250%22%20height%3D%2248%22%20rx%3D%2212%22%20fill%3D%22%23070d1a%22/%3E%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M153.446%2022.3766C153.771%2022.0505%20154.158%2021.7918%20154.583%2021.6153C155.008%2021.4388%20155.464%2021.3479%20155.924%2021.3479C156.384%2021.3479%20156.84%2021.4388%20157.265%2021.6153C157.691%2021.7918%20158.077%2022.0505%20158.402%2022.3766L168.96%2032.9632C169.288%2033.2882%20169.549%2033.6748%20169.727%2034.1007C169.906%2034.5267%20169.998%2034.9837%20170%2035.4455C170.001%2035.9073%20169.911%2036.3648%20169.736%2036.7919C169.56%2037.2189%20169.302%2037.6071%20168.976%2037.9342C168.65%2038.2612%20168.262%2038.5207%20167.836%2038.6978C167.409%2038.8749%20166.952%2038.966%20166.49%2038.966C166.028%2038.966%20165.571%2038.8749%20165.145%2038.6978C164.718%2038.5207%20164.331%2038.2612%20164.005%2037.9342L153.446%2027.3475C152.789%2026.6874%20152.42%2025.7937%20152.42%2024.8621C152.42%2023.9304%20152.789%2023.0367%20153.446%2022.3766Z%22%20fill%3D%22%230CA0E2%22/%3E%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M147.747%2022.3764C148.08%2022.6992%20148.345%2023.0855%20148.525%2023.5124C148.706%2023.9394%20148.799%2024.3983%20148.799%2024.8619C148.799%2025.3254%20148.706%2025.7843%20148.525%2026.2113C148.345%2026.6382%20148.08%2027.0245%20147.747%2027.3473L136.884%2037.9538C136.2%2038.6151%20135.286%2038.9848%20134.335%2038.9848C133.384%2038.9848%20132.47%2038.6151%20131.786%2037.9538C131.453%2037.6313%20131.188%2037.245%20131.008%2036.818C130.827%2036.3911%20130.733%2035.9321%20130.733%2035.4684C130.733%2035.0047%20130.827%2034.5457%20131.008%2034.1187C131.188%2033.6917%20131.453%2033.3055%20131.786%2032.9829L142.649%2022.3764C143.333%2021.7157%20144.247%2021.3464%20145.198%2021.3464C146.149%2021.3464%20147.063%2021.7157%20147.747%2022.3764Z%22%20fill%3D%22%23FF0600%22/%3E%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M153.447%2016.7408C154.105%2017.3952%20154.996%2017.7625%20155.924%2017.7625C156.853%2017.7625%20157.743%2017.3952%20158.402%2016.7408L168.96%206.24084C169.285%205.91838%20169.544%205.53467%20169.72%205.11185C169.896%204.68902%20169.987%204.23548%20169.987%203.77739C169.987%203.31931%20169.896%202.86576%20169.72%202.44294C169.544%202.02012%20169.285%201.6364%20168.96%201.31395C168.301%200.660258%20167.411%200.293457%20166.482%200.293457C165.554%200.293457%20164.664%200.660258%20164.005%201.31395L153.447%2011.8154C153.122%2012.138%20152.864%2012.5218%20152.688%2012.9446C152.512%2013.3674%20152.421%2013.8208%20152.421%2014.2788C152.421%2014.7368%20152.512%2015.1902%20152.688%2015.613C152.864%2016.0358%20153.122%2016.4196%20153.447%2016.7423%22%20fill%3D%22%231AE50A%22/%3E%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M147.747%2016.7595C148.08%2016.4368%20148.344%2016.0504%20148.525%2015.6235C148.706%2015.1966%20148.799%2014.7377%20148.799%2014.2741C148.799%2013.8105%20148.706%2013.3516%20148.525%2012.9247C148.344%2012.4977%20148.08%2012.1114%20147.747%2011.7886L136.883%201.17357C136.2%200.512272%20135.286%200.142578%20134.335%200.142578C133.384%200.142578%20132.47%200.512272%20131.786%201.17357C131.452%201.49625%20131.186%201.88294%20131.005%202.31057C130.823%202.7382%20130.729%203.19801%20130.729%203.66258C130.729%204.12715%20130.823%204.58697%20131.005%205.0146C131.186%205.44223%20131.452%205.82891%20131.786%206.1516L142.648%2016.7595C143.333%2017.4203%20144.247%2017.7896%20145.198%2017.7896C146.149%2017.7896%20147.063%2017.4203%20147.747%2016.7595Z%22%20fill%3D%22%23FF9515%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
+    --bg: #070d1a;
     --brand: #1192ef;
-    --brand-strong: #0062a8;
-    --brand-100: #cfe9fc;
-    --dark: #1a1a1a;
-    --dark-2: #525252;
-    --slate-50: #f8fafc;
-    --slate-100: #f1f5f9;
-    --slate-200: #e2e8f0;
-    --slate-300: #cbd5e1;
-    --slate-500: #64748b;
-    --amber: #f59e0b;
-    --amber-700: #b45309;
-    --red: #e11d2e;
-    --green-700: #047857;
-    --green-50: #ecfdf5;
-    --ring: var(--brand);
+    --brand-hi: #4fb6ff;
+    --text: #eef3fb;
+    --muted: #8b9bb6;
+    --faint: #56657f;
+    --line: rgba(255,255,255,.09);
+    --glass: rgba(255,255,255,.045);
+    --amber: #ffb547;
+    --red: #ff4d5e;
+    --green: #4ade80;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
   body {
     font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-    color: var(--dark);
+    color: var(--text);
     background:
-      radial-gradient(1100px 560px at 90% -15%, var(--brand-100) 0%, rgba(207,233,252,0) 65%),
-      var(--slate-50);
+      radial-gradient(900px 520px at 22% -8%, rgba(17,146,239,.30), transparent 70%),
+      radial-gradient(800px 600px at 105% 105%, rgba(136,122,249,.20), transparent 70%),
+      radial-gradient(600px 400px at 70% 40%, rgba(17,146,239,.07), transparent 70%),
+      var(--bg);
+    background-attachment: fixed;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
-  button { font: inherit; cursor: pointer; }
-  button:disabled { cursor: not-allowed; opacity: .4; }
+  body::before {           /* faint dot grid, like a stage floor */
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image: radial-gradient(rgba(255,255,255,.07) 1px, transparent 1.2px);
+    background-size: 26px 26px;
+    -webkit-mask-image: radial-gradient(ellipse at 50% 40%, #000 30%, transparent 80%);
+            mask-image: radial-gradient(ellipse at 50% 40%, #000 30%, transparent 80%);
+  }
+  header, main { position: relative; z-index: 1; }
+  button { font: inherit; cursor: pointer; color: inherit; }
+  button:disabled { cursor: not-allowed; }
 
+  /* Header */
   header {
-    display: flex; align-items: center; gap: 20px;
-    max-width: 1360px; margin: 0 auto; padding: 18px 32px 14px;
+    display: flex; align-items: center; gap: 22px;
+    max-width: 1360px; margin: 0 auto; padding: 20px 32px 14px;
   }
-  .logo { height: 32px; width: auto; display: block; flex: none; }
-  .divider { width: 1px; height: 34px; background: var(--slate-300); }
-  h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -.01em; }
-  .date { margin-top: 2px; font-size: 14px; color: var(--slate-500); }
+  .logo { height: 40px; width: auto; display: block; flex: none; shape-rendering: geometricPrecision; }
+  .divider { width: 1px; height: 38px; background: linear-gradient(transparent, rgba(255,255,255,.22), transparent); }
+  .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--brand-hi); }
+  h1 { margin: 2px 0 0; font-size: 22px; font-weight: 700; letter-spacing: -.015em; }
+  .date { color: var(--muted); font-weight: 500; }
   .header-actions { margin-left: auto; display: flex; gap: 10px; }
 
+  /* Buttons */
   .btn {
-    border: 1px solid transparent; border-radius: 12px;
-    padding: 12px 20px; font-weight: 600; font-size: 16px;
-    display: inline-flex; align-items: center; gap: 8px;
-    transition: background .15s, transform .05s, box-shadow .15s;
+    border: 1px solid transparent; border-radius: 14px;
+    padding: 13px 22px; font-weight: 600; font-size: 16px; letter-spacing: -.005em;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    transition: background .2s, box-shadow .2s, transform .08s, opacity .2s, border-color .2s;
   }
-  .btn:active:not(:disabled) { transform: translateY(1px); }
-  .btn-primary { background: var(--brand); color: #fff; box-shadow: 0 4px 14px rgba(17,146,239,.35); }
-  .btn-primary:hover:not(:disabled) { background: var(--brand-strong); }
-  .btn-secondary { background: var(--dark); color: #fff; }
-  .btn-secondary:hover:not(:disabled) { background: #000; }
-  .btn-ghost { background: #fff; color: var(--dark); border-color: var(--slate-200); }
-  .btn-ghost:hover:not(:disabled) { background: var(--slate-100); }
-  .btn-small { padding: 8px 14px; font-size: 14px; border-radius: 10px; }
+  .btn:active:not(:disabled) { transform: translateY(1px) scale(.99); }
+  .btn:disabled { opacity: .35; }
+  .btn:focus-visible, .hub:focus-visible, .chip:focus-visible { outline: 2px solid var(--brand-hi); outline-offset: 3px; }
+  .btn-primary {
+    background: linear-gradient(180deg, #2fa6ff, #0b78d6);
+    color: #fff; border-color: rgba(255,255,255,.18);
+    box-shadow: 0 10px 28px -6px rgba(17,146,239,.65), inset 0 1px 0 rgba(255,255,255,.25);
+  }
+  .btn-primary:hover:not(:disabled) { box-shadow: 0 12px 34px -6px rgba(17,146,239,.85), inset 0 1px 0 rgba(255,255,255,.3); }
+  .btn-secondary { background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.14); color: var(--text); }
+  .btn-secondary:hover:not(:disabled) { background: rgba(255,255,255,.16); }
+  .btn-ghost { background: transparent; border-color: var(--line); color: var(--muted); }
+  .btn-ghost:hover:not(:disabled) { color: var(--text); border-color: rgba(255,255,255,.2); background: rgba(255,255,255,.04); }
+  .btn-small { padding: 8px 14px; font-size: 13px; border-radius: 11px; }
 
+  /* Layout */
   main {
-    max-width: 1360px; margin: 0 auto; padding: 4px 32px 28px;
+    max-width: 1360px; margin: 0 auto; padding: 4px 32px 26px;
     display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
     grid-template-areas: "wheel timer" "team team";
-    gap: 22px;
+    gap: 20px;
   }
   .card {
-    background: #fff; border: 1px solid var(--slate-200); border-radius: 20px;
-    box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 10px 28px rgba(15,23,42,.06);
+    position: relative;
+    background: linear-gradient(180deg, rgba(255,255,255,.065), rgba(255,255,255,.025));
+    border: 1px solid var(--line); border-radius: 26px;
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.06);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
   }
 
   /* Wheel */
-  .wheel-card { grid-area: wheel; display: flex; align-items: center; justify-content: center; padding: 26px; }
-  .wheel-wrap { position: relative; width: min(100%, 56vh); aspect-ratio: 1; }
-  .wheel-wrap canvas { width: 100%; height: 100%; display: block; }
-  .pointer {
-    position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
-    width: 0; height: 0; z-index: 2;
-    border-left: 17px solid transparent; border-right: 17px solid transparent;
-    border-top: 32px solid var(--dark);
-    filter: drop-shadow(0 3px 3px rgba(0,0,0,.25));
+  .wheel-card { grid-area: wheel; display: flex; align-items: center; justify-content: center; padding: 30px 26px 24px; overflow: hidden; }
+  .wheel-card::before {     /* spotlight behind the wheel */
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(closest-side at 50% 52%, rgba(17,146,239,.22), transparent 85%);
   }
+  .wheel-wrap { position: relative; width: min(100%, 60vh); aspect-ratio: 1; }
+  .wheel-wrap canvas { width: 100%; height: 100%; display: block; filter: drop-shadow(0 24px 40px rgba(0,0,0,.55)); }
+  .pointer {
+    position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+    width: 46px; z-index: 2; transform-origin: 50% 30%;
+    filter: drop-shadow(0 6px 8px rgba(0,0,0,.5)) drop-shadow(0 0 12px rgba(79,182,255,.45));
+  }
+  .pointer.bump { animation: bump .12s ease-out; }
+  @keyframes bump { 50% { transform: translateX(-50%) rotate(-9deg); } }
   .hub {
     position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-    width: 24%; aspect-ratio: 1; border-radius: 50%;
-    background: #fff; border: 6px solid var(--brand); color: var(--brand-strong);
-    font-weight: 800; font-size: clamp(14px, 2.3vh, 22px); letter-spacing: .08em;
-    box-shadow: 0 6px 18px rgba(0,0,0,.18);
-    transition: transform .15s, background .15s;
+    width: 25%; aspect-ratio: 1; border-radius: 50%; padding: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6%;
+    background: radial-gradient(circle at 50% 30%, #1d2a44, #0a1222 70%);
+    border: 2px solid rgba(255,255,255,.16);
+    box-shadow: 0 0 0 6px rgba(7,13,26,.55), 0 12px 28px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.12), 0 0 34px rgba(17,146,239,.35);
+    transition: transform .2s, box-shadow .2s, filter .2s;
   }
-  .hub:hover:not(:disabled) { transform: translate(-50%, -50%) scale(1.04); background: var(--brand-100); }
-  .hub:disabled { opacity: 1; color: var(--slate-300); border-color: var(--slate-200); }
+  .hub svg { width: 42%; height: auto; display: block; transition: transform .6s cubic-bezier(.3,1.6,.5,1); }
+  .hub span { font-size: clamp(10px, 1.5vh, 14px); font-weight: 800; letter-spacing: .28em; margin-left: .28em; color: var(--text); }
+  .hub:hover:not(:disabled) { transform: translate(-50%, -50%) scale(1.05); box-shadow: 0 0 0 6px rgba(7,13,26,.55), 0 14px 32px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.14), 0 0 48px rgba(17,146,239,.6); }
+  .hub:hover:not(:disabled) svg { transform: rotate(90deg); }
+  .hub:not(:disabled) { animation: breathe 2.6s ease-in-out infinite; }
+  @keyframes breathe { 50% { box-shadow: 0 0 0 6px rgba(7,13,26,.55), 0 12px 28px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.12), 0 0 52px rgba(17,146,239,.6); } }
+  .hub:disabled { filter: saturate(.25) brightness(.8); }
+  .hub:disabled span { color: var(--faint); }
 
   /* Timer */
-  .timer-card { grid-area: timer; padding: 26px 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-  .label { font-size: 13px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--slate-500); }
-  .speaker { margin-top: 6px; font-size: clamp(30px, 5vh, 46px); font-weight: 800; letter-spacing: -.02em; min-height: 1.25em; display: flex; align-items: center; gap: 14px; }
-  .speaker .dot { width: .5em; height: .5em; border-radius: 50%; flex: none; }
-  .speaker.muted { color: var(--slate-300); font-weight: 600; font-size: clamp(20px, 3vh, 26px); }
+  .timer-card { grid-area: timer; padding: 26px 30px 22px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .label { font-size: 12px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--brand-hi); }
+  .speaker { margin-top: 8px; font-size: clamp(30px, 5.2vh, 48px); font-weight: 800; letter-spacing: -.03em; min-height: 1.2em; display: flex; align-items: center; gap: 14px; line-height: 1.1; }
+  .speaker .dot { width: .42em; height: .42em; border-radius: 50%; flex: none; box-shadow: 0 0 0 4px rgba(255,255,255,.06), 0 0 22px var(--c); }
+  .speaker.muted { color: var(--faint); font-weight: 600; font-size: clamp(20px, 3vh, 26px); letter-spacing: -.01em; }
   .speaker.pop { animation: pop .45s ease-out; }
-  @keyframes pop { 0% { transform: scale(.6); opacity: 0; } 70% { transform: scale(1.08); opacity: 1; } 100% { transform: scale(1); } }
-
-  .ring-wrap { position: relative; width: clamp(190px, 32vh, 320px); aspect-ratio: 1; margin: 12px 0 16px; }
-  .ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-  .ring-track { fill: none; stroke: var(--slate-100); stroke-width: 12; }
-  .ring-bar { fill: none; stroke: var(--ring); stroke-width: 12; stroke-linecap: round; transition: stroke-dashoffset .12s linear, stroke .3s; }
-  .digits {
-    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    font-variant-numeric: tabular-nums;
-  }
-  .digits .time { font-size: clamp(48px, 9vh, 88px); font-weight: 800; letter-spacing: -.03em; line-height: 1; color: var(--dark); transition: color .3s; }
-  .digits .sub { margin-top: 8px; font-size: 14px; font-weight: 600; color: var(--slate-500); }
-  .warn  { --ring: var(--amber); }
-  .warn .digits .time { color: var(--amber-700); }
-  .crit  { --ring: var(--red); }
-  .crit .digits .time { color: var(--red); }
-  .over  { --ring: var(--red); }
-  .over .digits .time { color: var(--red); }
-  .over .ring-bar { animation: blink 1s steps(2, start) infinite; }
-  @keyframes blink { to { stroke-opacity: .35; } }
-
-  .controls { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
-  .controls .btn { min-width: 132px; justify-content: center; }
-  .keys { margin-top: 14px; font-size: 13px; color: var(--slate-500); }
-  kbd {
-    font-family: inherit; font-size: 12px; font-weight: 600;
-    border: 1px solid var(--slate-300); border-bottom-width: 2px; border-radius: 6px;
-    padding: 1px 6px; background: #fff; color: var(--dark-2);
-  }
-
-  /* Team strip */
-  .team-card { grid-area: team; padding: 16px 22px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
-  .team-title { font-size: 13px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--slate-500); }
-  .team-hint { font-size: 13px; color: var(--slate-500); margin-left: auto; }
-  .chips { display: flex; gap: 10px; flex-wrap: wrap; }
-  .chip {
-    display: flex; align-items: center; gap: 10px;
-    padding: 9px 14px 9px 12px; border-radius: 999px;
-    border: 2px solid var(--slate-200); background: #fff;
-    font-weight: 600; font-size: 15px; color: var(--dark);
-  }
-  .chip .dot { width: 12px; height: 12px; border-radius: 50%; flex: none; }
-  .chip .state { font-weight: 500; font-size: 13px; color: var(--slate-500); font-variant-numeric: tabular-nums; }
-  .chip.speaking { border-color: var(--c); box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 22%, transparent); }
-  .chip.speaking .state { color: var(--dark); font-weight: 600; }
-  .chip.done { background: var(--slate-50); }
-  .chip.done .state { color: var(--green-700); font-weight: 600; }
-  .chip.done.late .state { color: var(--amber-700); }
-  .chip.away { opacity: .5; border-style: dashed; }
-  .chip.away .name { text-decoration: line-through; }
-  .chip:disabled { opacity: 1; cursor: default; }
-  .chip.away:disabled { opacity: .5; }
-  .chip:not(:disabled):hover { border-color: var(--slate-300); background: var(--slate-50); }
-
-  /* Summary */
-  .overlay {
-    position: fixed; inset: 0; background: rgba(15,23,42,.45);
-    display: none; align-items: center; justify-content: center; padding: 24px; z-index: 10;
-    backdrop-filter: blur(3px);
-  }
-  .overlay.show { display: flex; }
-  .summary { width: min(520px, 100%); padding: 30px 32px; }
-  .summary h2 { margin: 0; font-size: 26px; letter-spacing: -.01em; }
-  .summary .total { margin-top: 4px; color: var(--slate-500); font-size: 15px; }
-  .summary ol { list-style: none; padding: 0; margin: 20px 0 24px; }
-  .summary li { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--slate-100); font-size: 17px; }
-  .summary li:last-child { border-bottom: 0; }
-  .summary .n { width: 22px; color: var(--slate-500); font-weight: 600; font-variant-numeric: tabular-nums; }
-  .summary .dot { width: 12px; height: 12px; border-radius: 50%; }
-  .summary .who { font-weight: 600; }
-  .summary .t { margin-left: auto; font-weight: 600; font-variant-numeric: tabular-nums; }
-  .summary .t.late { color: var(--amber-700); }
-  .summary .t.away { color: var(--slate-500); font-weight: 500; }
-  .summary .actions { display: flex; gap: 10px; justify-content: flex-end; }
-
-  .quip { min-height: 1.4em; margin-top: 4px; font-size: clamp(15px, 2.2vh, 19px); font-weight: 500; color: var(--dark-2); }
+  @keyframes pop { 0% { transform: scale(.6); opacity: 0; } 70% { transform: scale(1.06); opacity: 1; } 100% { transform: scale(1); } }
+  .quip { min-height: 1.4em; margin-top: 6px; font-size: clamp(14px, 2.1vh, 18px); font-weight: 500; color: var(--muted); }
   .quip.pop { animation: fadeUp .5s .15s ease-out both; }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
+  .ring-wrap { position: relative; width: clamp(190px, 35vh, 340px); aspect-ratio: 1; margin: 14px 0 18px; }
+  .ring-wrap::before {      /* soft disc behind the digits */
+    content: ""; position: absolute; inset: 9%; border-radius: 50%;
+    background: radial-gradient(circle at 50% 35%, rgba(255,255,255,.06), rgba(255,255,255,0) 70%);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
+  }
+  .ring-wrap svg { position: relative; width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+  .ring-track { fill: none; stroke: rgba(255,255,255,.07); stroke-width: 9; }
+  .ring-ticks { fill: none; stroke: rgba(255,255,255,.10); stroke-width: 3; stroke-dasharray: 1.5 7.7; }
+  .ring-bar { fill: none; stroke: url(#gBlue); stroke-width: 9; stroke-linecap: round; transition: stroke-dashoffset .12s linear; filter: drop-shadow(0 0 7px rgba(47,166,255,.75)); }
+  .warn .ring-bar { stroke: url(#gAmber); filter: drop-shadow(0 0 7px rgba(255,181,71,.75)); }
+  .crit .ring-bar, .over .ring-bar { stroke: url(#gRed); filter: drop-shadow(0 0 8px rgba(255,77,94,.85)); }
+  .digits { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-variant-numeric: tabular-nums; }
+  .digits .time { font-size: clamp(50px, 9.5vh, 92px); font-weight: 700; letter-spacing: -.045em; line-height: 1; color: #fff; transition: color .3s; text-shadow: 0 2px 24px rgba(0,0,0,.35); }
+  .digits .sub { margin-top: 10px; font-size: 12px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  .warn .digits .time { color: var(--amber); }
+  .crit .digits .time, .over .digits .time { color: var(--red); }
+  .over .ring-bar { animation: blink 1s steps(2, start) infinite; }
+  @keyframes blink { to { stroke-opacity: .35; } }
   .over .digits .time { animation: shake 3s ease-in-out infinite; }
   @keyframes shake {
     0%, 14%, 100% { transform: translateX(0) rotate(0); }
@@ -195,27 +172,91 @@
     12% { transform: translateX(3px); }
   }
 
-  .speaker .crown { opacity: 0; display: inline-block; margin-left: -4px; }
-  .speaker .crown.shown { opacity: 1; animation: crownSettle .5s ease-out; }
-  @keyframes crownSettle { 0% { transform: scale(1.5) rotate(-10deg); } 60% { transform: scale(.9) rotate(4deg); } 100% { transform: none; } }
-  .crown-drop {
-    position: fixed; left: 0; top: 0; z-index: 31; pointer-events: none; line-height: 1;
-    filter: drop-shadow(0 8px 18px rgba(0,0,0,.25));
-    transition: filter .4s;
+  .controls { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .controls .btn { min-width: 128px; }
+  .controls #startBtn { min-width: 150px; }
+  .keys { margin-top: 14px; font-size: 12.5px; color: var(--faint); }
+  kbd {
+    font-family: inherit; font-size: 11.5px; font-weight: 600; color: var(--muted);
+    border: 1px solid rgba(255,255,255,.14); border-bottom-width: 2px; border-radius: 6px;
+    padding: 1px 6px; background: rgba(255,255,255,.05);
   }
-  .crown-drop.glow { filter: drop-shadow(0 0 28px rgba(255,210,63,.95)) drop-shadow(0 0 60px rgba(255,190,0,.6)); }
 
-  #fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 30; }
+  /* Team strip */
+  .team-card { grid-area: team; padding: 14px 20px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; border-radius: 22px; }
+  .team-title { font-size: 12px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--faint); }
+  .team-hint { font-size: 12.5px; color: var(--faint); margin-left: auto; }
+  .chips { display: flex; gap: 10px; flex-wrap: wrap; }
+  .chip {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 14px 6px 6px; border-radius: 999px;
+    border: 1px solid var(--line); background: rgba(255,255,255,.04);
+    font-weight: 600; font-size: 15px; color: var(--text);
+    transition: background .2s, border-color .2s, box-shadow .2s, opacity .2s;
+  }
+  .chip .av {
+    position: relative; width: 30px; height: 30px; border-radius: 50%; flex: none;
+    display: grid; place-items: center; font-size: 13px; font-weight: 800;
+    box-shadow: inset 0 -2px 0 rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.35);
+  }
+  .chip .state { font-weight: 500; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .chip.speaking { border-color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 22%, transparent), 0 0 24px color-mix(in srgb, var(--c) 35%, transparent); }
+  .chip.speaking .state { color: var(--text); font-weight: 600; }
+  .chip.done .state { color: var(--green); font-weight: 600; }
+  .chip.done.late .state { color: var(--amber); }
+  .chip.done .av::after {
+    content: "✓"; position: absolute; right: -4px; bottom: -4px;
+    width: 15px; height: 15px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--green); color: #052e16; font-size: 10px; font-weight: 900; border: 2px solid #0d1526;
+  }
+  .chip.done.late .av::after { content: "!"; background: var(--amber); color: #3b2000; }
+  .chip.away { opacity: .4; border-style: dashed; }
+  .chip.away .av { filter: grayscale(1); }
+  .chip.away .name { text-decoration: line-through; }
+  .chip:disabled { cursor: default; }
+  .chip:not(:disabled):hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18); }
 
-  .awards { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+  /* Summary */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(3,7,16,.62);
+    display: none; align-items: center; justify-content: center; padding: 24px; z-index: 10;
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  }
+  .overlay.show { display: flex; }
+  .summary { width: min(540px, 100%); padding: 30px 32px 26px; background: linear-gradient(180deg, #131d33, #0c1426); animation: rise .35s ease-out; }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px) scale(.98); } }
+  .summary h2 { margin: 0; font-size: 28px; letter-spacing: -.02em; }
+  .summary .total { margin-top: 6px; color: var(--muted); font-size: 15px; }
+  .summary ol { list-style: none; padding: 0; margin: 18px 0 22px; }
+  .summary li { display: flex; align-items: center; gap: 12px; padding: 11px 2px; border-bottom: 1px solid rgba(255,255,255,.06); font-size: 17px; }
+  .summary li:last-child { border-bottom: 0; }
+  .summary .n { width: 22px; color: var(--faint); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .summary .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .summary .who { font-weight: 600; }
+  .summary .t { margin-left: auto; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .summary .t.late { color: var(--amber); }
+  .summary .t.away { color: var(--faint); font-weight: 500; }
+  .summary .actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .awards { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
   .awards:empty { display: none; }
   .award {
     flex: 1 1 200px; display: flex; align-items: center; gap: 12px;
-    padding: 12px 14px; border-radius: 14px; background: var(--slate-50); border: 1px solid var(--slate-200);
+    padding: 12px 14px; border-radius: 16px;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--a) 22%, transparent), rgba(255,255,255,.03));
+    border: 1px solid color-mix(in srgb, var(--a) 45%, transparent);
+    box-shadow: 0 0 24px -6px color-mix(in srgb, var(--a) 50%, transparent);
   }
   .award .icon { font-size: 26px; line-height: 1; }
-  .award .aw-title { display: block; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--slate-500); }
-  .award .aw-who { display: block; font-size: 16px; font-weight: 700; margin-top: 2px; }
+  .award .aw-title { display: block; font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--a); }
+  .award .aw-who { display: block; font-size: 16px; font-weight: 700; margin-top: 3px; }
+
+  /* Effects */
+  .speaker .crown { opacity: 0; display: inline-block; margin-left: -4px; }
+  .speaker .crown.shown { opacity: 1; animation: crownSettle .5s ease-out; filter: drop-shadow(0 0 10px rgba(255,210,63,.7)); }
+  @keyframes crownSettle { 0% { transform: scale(1.5) rotate(-10deg); } 60% { transform: scale(.9) rotate(4deg); } 100% { transform: none; } }
+  .crown-drop { position: fixed; left: 0; top: 0; z-index: 31; pointer-events: none; line-height: 1; filter: drop-shadow(0 8px 18px rgba(0,0,0,.45)); transition: filter .4s; }
+  .crown-drop.glow { filter: drop-shadow(0 0 28px rgba(255,210,63,.95)) drop-shadow(0 0 60px rgba(255,190,0,.6)); }
+  #fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 30; }
 
   @media (max-width: 900px) {
     header { flex-wrap: wrap; padding: 16px 18px 10px; }
@@ -226,7 +267,7 @@
     .team-hint { margin-left: 0; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .speaker.pop, .quip.pop, .over .ring-bar, .over .digits .time { animation: none; }
+    .speaker.pop, .quip.pop, .over .ring-bar, .over .digits .time, .hub:not(:disabled), .summary, .pointer.bump { animation: none; }
   }
 </style>
 </head>
@@ -234,9 +275,9 @@
 
 <header>
   <svg class="logo" role="img" aria-label="EonX" viewBox="0 0 170 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M7.41519 19.755C7.41519 16.353 8.62762 13.4505 11.0525 11.0474C13.4773 8.6443 16.3955 7.44276 19.807 7.44276C22.6371 7.44276 24.4588 7.75332 25.2721 8.37445L8.35398 25.1705C7.72717 24.342 7.41424 22.5368 7.41519 19.755ZM35.4327 31.8272C36.2849 30.7166 37.4935 28.8944 37.1597 27.1404C36.9907 26.4757 36.745 25.7698 36.0235 25.2202C34.3263 23.9263 31.8565 24.4092 30.6265 26.1419C30.5825 26.203 30.493 26.284 30.4646 26.3166C29.5358 27.4206 28.9203 28.1336 28.6183 28.4555C26.1811 30.8472 23.2459 32.0426 19.8127 32.0417C16.6322 32.0417 14.4393 31.5129 13.234 30.4553L32.2002 11.6482L35.8204 8.02649C34.7287 6.8079 34.0659 6.08357 33.8321 5.85349C33.2734 5.30243 32.7053 4.78545 32.1278 4.30256C28.6046 1.49991 24.4976 0.0981148 19.807 0.097168C14.3532 0.097168 9.68855 2.01689 5.81313 5.85633C1.93771 9.69577 0 14.3287 0 19.755C0 25.1814 1.93771 29.8142 5.81313 33.6537C9.68855 37.4931 14.3532 39.4133 19.807 39.4143C25.2835 39.4143 29.96 37.4941 33.8363 33.6537C34.3948 33.0766 34.9211 32.4692 35.4128 31.8343L35.4327 31.8244" fill="black"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M52.29 11.0622C49.8879 13.4767 48.6873 16.3736 48.6882 19.7528C48.6882 23.1558 49.8888 26.0531 52.29 28.4448C54.6912 30.8366 57.5914 32.032 60.9905 32.031C64.3897 32.031 67.2899 30.8356 69.6911 28.4448C72.0923 26.0541 73.2905 23.1567 73.2858 19.7528C73.2858 16.3745 72.0856 13.4776 69.6854 11.0622C67.2851 8.64685 64.385 7.43962 60.9849 7.44057C57.5847 7.44057 54.6846 8.64779 52.2843 11.0622H52.29ZM60.9905 0.0949711C66.4122 0.0949711 71.0351 2.01469 74.8594 5.85414C78.6837 9.69358 80.5963 14.3265 80.5973 19.7528C80.5973 25.1792 78.6847 29.8126 74.8594 33.6529C71.0342 37.4933 66.4112 39.4131 60.9905 39.4121C55.5935 39.4121 50.9758 37.4924 47.1373 33.6529C43.2988 29.8135 41.381 25.1801 41.3838 19.7528C41.3838 14.3274 43.3016 9.69453 47.1373 5.85414C50.9729 2.01375 55.5907 0.0940242 60.9905 0.0949711Z" fill="black"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M125.103 18.7673C124.926 13.7084 123.027 9.36237 119.408 5.72934C115.601 1.90978 111 0 105.603 0C100.23 0 95.6348 1.90978 91.8162 5.72934C88.4076 9.13797 86.459 13.1147 86.0883 17.776C86.0698 17.9464 86.0883 18.2859 86.0883 18.5302V35.3276C86.0883 35.8166 86.1846 36.3009 86.3717 36.7527C86.5589 37.2045 86.8332 37.615 87.179 37.9608C87.5248 38.3066 87.9353 38.5809 88.3871 38.7681C88.8389 38.9552 89.3232 39.0515 89.8122 39.0515C90.3012 39.0515 90.7855 38.9552 91.2373 38.7681C91.6891 38.5809 92.0996 38.3066 92.4454 37.9608C92.7912 37.615 93.0655 37.2045 93.2527 36.7527C93.4398 36.3009 93.5361 35.8166 93.5361 35.3276V20.1223C93.7108 17.0957 94.7434 13.1218 96.9448 10.9105C99.3336 8.50927 102.222 7.30867 105.608 7.30867C108.995 7.30867 111.883 8.50927 114.272 10.9105C116.471 13.1218 117.656 17.0957 117.831 20.1223H117.855V35.4228C117.846 35.9053 117.933 36.3848 118.111 36.8333C118.289 37.2819 118.554 37.6904 118.892 38.035C119.23 38.3796 119.633 38.6533 120.078 38.8402C120.523 39.0271 121.001 39.1233 121.483 39.1233C121.966 39.1233 122.444 39.0271 122.889 38.8402C123.333 38.6533 123.737 38.3796 124.075 38.035C124.412 37.6904 124.678 37.2819 124.856 36.8333C125.034 36.3848 125.121 35.9053 125.111 35.4228V19.3511C125.11 19.1583 125.093 18.966 125.062 18.7759L125.103 18.7673Z" fill="black"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M7.41519 19.755C7.41519 16.353 8.62762 13.4505 11.0525 11.0474C13.4773 8.6443 16.3955 7.44276 19.807 7.44276C22.6371 7.44276 24.4588 7.75332 25.2721 8.37445L8.35398 25.1705C7.72717 24.342 7.41424 22.5368 7.41519 19.755ZM35.4327 31.8272C36.2849 30.7166 37.4935 28.8944 37.1597 27.1404C36.9907 26.4757 36.745 25.7698 36.0235 25.2202C34.3263 23.9263 31.8565 24.4092 30.6265 26.1419C30.5825 26.203 30.493 26.284 30.4646 26.3166C29.5358 27.4206 28.9203 28.1336 28.6183 28.4555C26.1811 30.8472 23.2459 32.0426 19.8127 32.0417C16.6322 32.0417 14.4393 31.5129 13.234 30.4553L32.2002 11.6482L35.8204 8.02649C34.7287 6.8079 34.0659 6.08357 33.8321 5.85349C33.2734 5.30243 32.7053 4.78545 32.1278 4.30256C28.6046 1.49991 24.4976 0.0981148 19.807 0.097168C14.3532 0.097168 9.68855 2.01689 5.81313 5.85633C1.93771 9.69577 0 14.3287 0 19.755C0 25.1814 1.93771 29.8142 5.81313 33.6537C9.68855 37.4931 14.3532 39.4133 19.807 39.4143C25.2835 39.4143 29.96 37.4941 33.8363 33.6537C34.3948 33.0766 34.9211 32.4692 35.4128 31.8343L35.4327 31.8244" fill="#ffffff"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M52.29 11.0622C49.8879 13.4767 48.6873 16.3736 48.6882 19.7528C48.6882 23.1558 49.8888 26.0531 52.29 28.4448C54.6912 30.8366 57.5914 32.032 60.9905 32.031C64.3897 32.031 67.2899 30.8356 69.6911 28.4448C72.0923 26.0541 73.2905 23.1567 73.2858 19.7528C73.2858 16.3745 72.0856 13.4776 69.6854 11.0622C67.2851 8.64685 64.385 7.43962 60.9849 7.44057C57.5847 7.44057 54.6846 8.64779 52.2843 11.0622H52.29ZM60.9905 0.0949711C66.4122 0.0949711 71.0351 2.01469 74.8594 5.85414C78.6837 9.69358 80.5963 14.3265 80.5973 19.7528C80.5973 25.1792 78.6847 29.8126 74.8594 33.6529C71.0342 37.4933 66.4112 39.4131 60.9905 39.4121C55.5935 39.4121 50.9758 37.4924 47.1373 33.6529C43.2988 29.8135 41.381 25.1801 41.3838 19.7528C41.3838 14.3274 43.3016 9.69453 47.1373 5.85414C50.9729 2.01375 55.5907 0.0940242 60.9905 0.0949711Z" fill="#ffffff"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M125.103 18.7673C124.926 13.7084 123.027 9.36237 119.408 5.72934C115.601 1.90978 111 0 105.603 0C100.23 0 95.6348 1.90978 91.8162 5.72934C88.4076 9.13797 86.459 13.1147 86.0883 17.776C86.0698 17.9464 86.0883 18.2859 86.0883 18.5302V35.3276C86.0883 35.8166 86.1846 36.3009 86.3717 36.7527C86.5589 37.2045 86.8332 37.615 87.179 37.9608C87.5248 38.3066 87.9353 38.5809 88.3871 38.7681C88.8389 38.9552 89.3232 39.0515 89.8122 39.0515C90.3012 39.0515 90.7855 38.9552 91.2373 38.7681C91.6891 38.5809 92.0996 38.3066 92.4454 37.9608C92.7912 37.615 93.0655 37.2045 93.2527 36.7527C93.4398 36.3009 93.5361 35.8166 93.5361 35.3276V20.1223C93.7108 17.0957 94.7434 13.1218 96.9448 10.9105C99.3336 8.50927 102.222 7.30867 105.608 7.30867C108.995 7.30867 111.883 8.50927 114.272 10.9105C116.471 13.1218 117.656 17.0957 117.831 20.1223H117.855V35.4228C117.846 35.9053 117.933 36.3848 118.111 36.8333C118.289 37.2819 118.554 37.6904 118.892 38.035C119.23 38.3796 119.633 38.6533 120.078 38.8402C120.523 39.0271 121.001 39.1233 121.483 39.1233C121.966 39.1233 122.444 39.0271 122.889 38.8402C123.333 38.6533 123.737 38.3796 124.075 38.035C124.412 37.6904 124.678 37.2819 124.856 36.8333C125.034 36.3848 125.121 35.9053 125.111 35.4228V19.3511C125.11 19.1583 125.093 18.966 125.062 18.7759L125.103 18.7673Z" fill="#ffffff"/>
 <path fill-rule="evenodd" clip-rule="evenodd" d="M153.446 22.3766C153.771 22.0505 154.158 21.7918 154.583 21.6153C155.008 21.4388 155.464 21.3479 155.924 21.3479C156.384 21.3479 156.84 21.4388 157.265 21.6153C157.691 21.7918 158.077 22.0505 158.402 22.3766L168.96 32.9632C169.288 33.2882 169.549 33.6748 169.727 34.1007C169.906 34.5267 169.998 34.9837 170 35.4455C170.001 35.9073 169.911 36.3648 169.736 36.7919C169.56 37.2189 169.302 37.6071 168.976 37.9342C168.65 38.2612 168.262 38.5207 167.836 38.6978C167.409 38.8749 166.952 38.966 166.49 38.966C166.028 38.966 165.571 38.8749 165.145 38.6978C164.718 38.5207 164.331 38.2612 164.005 37.9342L153.446 27.3475C152.789 26.6874 152.42 25.7937 152.42 24.8621C152.42 23.9304 152.789 23.0367 153.446 22.3766Z" fill="#0CA0E2"/>
 <path fill-rule="evenodd" clip-rule="evenodd" d="M147.747 22.3764C148.08 22.6992 148.345 23.0855 148.525 23.5124C148.706 23.9394 148.799 24.3983 148.799 24.8619C148.799 25.3254 148.706 25.7843 148.525 26.2113C148.345 26.6382 148.08 27.0245 147.747 27.3473L136.884 37.9538C136.2 38.6151 135.286 38.9848 134.335 38.9848C133.384 38.9848 132.47 38.6151 131.786 37.9538C131.453 37.6313 131.188 37.245 131.008 36.818C130.827 36.3911 130.733 35.9321 130.733 35.4684C130.733 35.0047 130.827 34.5457 131.008 34.1187C131.188 33.6917 131.453 33.3055 131.786 32.9829L142.649 22.3764C143.333 21.7157 144.247 21.3464 145.198 21.3464C146.149 21.3464 147.063 21.7157 147.747 22.3764Z" fill="#FF0600"/>
 <path fill-rule="evenodd" clip-rule="evenodd" d="M153.447 16.7408C154.105 17.3952 154.996 17.7625 155.924 17.7625C156.853 17.7625 157.743 17.3952 158.402 16.7408L168.96 6.24084C169.285 5.91838 169.544 5.53467 169.72 5.11185C169.896 4.68902 169.987 4.23548 169.987 3.77739C169.987 3.31931 169.896 2.86576 169.72 2.44294C169.544 2.02012 169.285 1.6364 168.96 1.31395C168.301 0.660258 167.411 0.293457 166.482 0.293457C165.554 0.293457 164.664 0.660258 164.005 1.31395L153.447 11.8154C153.122 12.138 152.864 12.5218 152.688 12.9446C152.512 13.3674 152.421 13.8208 152.421 14.2788C152.421 14.7368 152.512 15.1902 152.688 15.613C152.864 16.0358 153.122 16.4196 153.447 16.7423" fill="#1AE50A"/>
@@ -244,8 +285,8 @@
 </svg>
   <div class="divider" aria-hidden="true"></div>
   <div>
+    <div class="eyebrow" id="date"></div>
     <h1>Cloud Team Daily Stand Up</h1>
-    <div class="date" id="date"></div>
   </div>
   <div class="header-actions">
     <button class="btn btn-ghost btn-small" id="soundBtn" aria-pressed="true">Sound: on</button>
@@ -256,9 +297,18 @@
 <main>
   <section class="card wheel-card" aria-label="Spin the wheel">
     <div class="wheel-wrap">
-      <div class="pointer" aria-hidden="true"></div>
+      <svg class="pointer" id="pointer" viewBox="0 0 46 58" aria-hidden="true">
+        <defs>
+          <linearGradient id="pg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#b9c6dc"/>
+          </linearGradient>
+        </defs>
+        <path d="M23 56 C18 44 4 33 4 20 A19 19 0 0 1 42 20 C42 33 28 44 23 56 Z" fill="url(#pg)" stroke="rgba(7,13,26,.35)" stroke-width="1.5"/>
+        <circle cx="23" cy="20" r="7" fill="#0b1324"/>
+        <circle cx="23" cy="20" r="3" fill="#4fb6ff"/>
+      </svg>
       <canvas id="wheel" aria-hidden="true"></canvas>
-      <button class="hub" id="hubBtn">SPIN</button>
+      <button class="hub" id="hubBtn" aria-label="Spin the wheel"><svg viewBox="129.5 -0.5 41.5 40.5" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M153.446 22.3766C153.771 22.0505 154.158 21.7918 154.583 21.6153C155.008 21.4388 155.464 21.3479 155.924 21.3479C156.384 21.3479 156.84 21.4388 157.265 21.6153C157.691 21.7918 158.077 22.0505 158.402 22.3766L168.96 32.9632C169.288 33.2882 169.549 33.6748 169.727 34.1007C169.906 34.5267 169.998 34.9837 170 35.4455C170.001 35.9073 169.911 36.3648 169.736 36.7919C169.56 37.2189 169.302 37.6071 168.976 37.9342C168.65 38.2612 168.262 38.5207 167.836 38.6978C167.409 38.8749 166.952 38.966 166.49 38.966C166.028 38.966 165.571 38.8749 165.145 38.6978C164.718 38.5207 164.331 38.2612 164.005 37.9342L153.446 27.3475C152.789 26.6874 152.42 25.7937 152.42 24.8621C152.42 23.9304 152.789 23.0367 153.446 22.3766Z" fill="#0CA0E2"/><path fill-rule="evenodd" clip-rule="evenodd" d="M147.747 22.3764C148.08 22.6992 148.345 23.0855 148.525 23.5124C148.706 23.9394 148.799 24.3983 148.799 24.8619C148.799 25.3254 148.706 25.7843 148.525 26.2113C148.345 26.6382 148.08 27.0245 147.747 27.3473L136.884 37.9538C136.2 38.6151 135.286 38.9848 134.335 38.9848C133.384 38.9848 132.47 38.6151 131.786 37.9538C131.453 37.6313 131.188 37.245 131.008 36.818C130.827 36.3911 130.733 35.9321 130.733 35.4684C130.733 35.0047 130.827 34.5457 131.008 34.1187C131.188 33.6917 131.453 33.3055 131.786 32.9829L142.649 22.3764C143.333 21.7157 144.247 21.3464 145.198 21.3464C146.149 21.3464 147.063 21.7157 147.747 22.3764Z" fill="#FF0600"/><path fill-rule="evenodd" clip-rule="evenodd" d="M153.447 16.7408C154.105 17.3952 154.996 17.7625 155.924 17.7625C156.853 17.7625 157.743 17.3952 158.402 16.7408L168.96 6.24084C169.285 5.91838 169.544 5.53467 169.72 5.11185C169.896 4.68902 169.987 4.23548 169.987 3.77739C169.987 3.31931 169.896 2.86576 169.72 2.44294C169.544 2.02012 169.285 1.6364 168.96 1.31395C168.301 0.660258 167.411 0.293457 166.482 0.293457C165.554 0.293457 164.664 0.660258 164.005 1.31395L153.447 11.8154C153.122 12.138 152.864 12.5218 152.688 12.9446C152.512 13.3674 152.421 13.8208 152.421 14.2788C152.421 14.7368 152.512 15.1902 152.688 15.613C152.864 16.0358 153.122 16.4196 153.447 16.7423" fill="#1AE50A"/><path fill-rule="evenodd" clip-rule="evenodd" d="M147.747 16.7595C148.08 16.4368 148.344 16.0504 148.525 15.6235C148.706 15.1966 148.799 14.7377 148.799 14.2741C148.799 13.8105 148.706 13.3516 148.525 12.9247C148.344 12.4977 148.08 12.1114 147.747 11.7886L136.883 1.17357C136.2 0.512272 135.286 0.142578 134.335 0.142578C133.384 0.142578 132.47 0.512272 131.786 1.17357C131.452 1.49625 131.186 1.88294 131.005 2.31057C130.823 2.7382 130.729 3.19801 130.729 3.66258C130.729 4.12715 130.823 4.58697 131.005 5.0146C131.186 5.44223 131.452 5.82891 131.786 6.1516L142.648 16.7595C143.333 17.4203 144.247 17.7896 145.198 17.7896C146.149 17.7896 147.063 17.4203 147.747 16.7595Z" fill="#FF9515"/></svg><span>SPIN</span></button>
     </div>
   </section>
 
@@ -268,6 +318,12 @@
     <div class="quip" id="quip" aria-live="polite"></div>
     <div class="ring-wrap">
       <svg viewBox="0 0 200 200" aria-hidden="true">
+        <defs>
+          <linearGradient id="gBlue" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7cc8ff"/><stop offset=".55" stop-color="#1192ef"/><stop offset="1" stop-color="#887af9"/></linearGradient>
+          <linearGradient id="gAmber" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset="1" stop-color="#ff9515"/></linearGradient>
+          <linearGradient id="gRed" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8a95"/><stop offset="1" stop-color="#ff0600"/></linearGradient>
+        </defs>
+        <circle class="ring-ticks" cx="100" cy="100" r="77"></circle>
         <circle class="ring-track" cx="100" cy="100" r="88"></circle>
         <circle class="ring-bar" id="ringBar" cx="100" cy="100" r="88"></circle>
       </svg>
@@ -279,9 +335,9 @@
     <div class="controls">
       <button class="btn btn-primary" id="startBtn" disabled>Start</button>
       <button class="btn btn-secondary" id="nextBtn" disabled>Next</button>
-      <button class="btn btn-ghost" id="restartBtn" disabled title="Put this person's timer back to 1:30">Restart</button>
+      <button class="btn btn-ghost" id="restartBtn" disabled title="Put this person's timer back to the start">Restart</button>
     </div>
-    <div class="keys"><kbd>Space</kbd> spin / start / pause &nbsp;·&nbsp; <kbd>N</kbd> next</div>
+    <div class="keys"><kbd>Space</kbd> spin / pause &nbsp;·&nbsp; <kbd>N</kbd> next</div>
   </section>
 
   <section class="card team-card" aria-label="Team">
@@ -293,7 +349,7 @@
 
 <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="sumTitle">
   <div class="card summary">
-    <h2 id="sumTitle">Stand up done</h2>
+    <h2 id="sumTitle">Stand up done 🎉</h2>
     <div class="total" id="sumTotal"></div>
     <div class="awards" id="awards"></div>
     <ol id="sumList"></ol>
@@ -412,38 +468,69 @@
     canvas.width = Math.round(w * dpr); canvas.height = Math.round(w * dpr);
     drawWheel();
   }
+  function shade(hex, amt) {   // amt > 0 mixes toward white, < 0 toward black
+    const n = parseInt(hex.slice(1), 16);
+    const t = amt < 0 ? 0 : 255, k = Math.abs(amt);
+    const mix = v => Math.round(v + (t - v) * k);
+    return `rgb(${mix(n >> 16)},${mix((n >> 8) & 255)},${mix(n & 255)})`;
+  }
   function drawWheel() {
     const W = canvas.width, c = W / 2, dpr = W / (canvas.clientWidth || 1);
-    const r = c - 6 * dpr;
+    if (!W) return;
+    const R = c - 2 * dpr;          // outer edge of the rim
+    const rimW = R * 0.045;
+    const r = R - rimW;             // slices
     ctx.clearRect(0, 0, W, W);
     const segs = onWheel();
 
-    if (!segs.length) {
-      ctx.beginPath(); ctx.arc(c, c, r, 0, TAU); ctx.fillStyle = '#f1f5f9'; ctx.fill();
-      return;
+    // Rim
+    const rim = ctx.createLinearGradient(0, 0, 0, W);
+    rim.addColorStop(0, '#2a3854'); rim.addColorStop(.5, '#121c31'); rim.addColorStop(1, '#0a1120');
+    ctx.beginPath(); ctx.arc(c, c, R, 0, TAU); ctx.fillStyle = rim; ctx.fill();
+    ctx.beginPath(); ctx.arc(c, c, R - dpr, 0, TAU); ctx.lineWidth = 1.5 * dpr; ctx.strokeStyle = 'rgba(255,255,255,.18)'; ctx.stroke();
+
+    // Slices
+    ctx.save(); ctx.translate(c, c);
+    ctx.beginPath(); ctx.arc(0, 0, r, 0, TAU); ctx.fillStyle = '#0b1324'; ctx.fill();
+    if (segs.length) {
+      const seg = TAU / segs.length;
+      ctx.rotate(rotation);
+      segs.forEach((p, i) => {
+        const a0 = -Math.PI / 2 + i * seg, a1 = a0 + seg;
+        const dim = current && p !== current;
+        ctx.globalAlpha = dim ? 0.22 : 1;
+        const g = ctx.createRadialGradient(0, 0, r * 0.15, 0, 0, r);
+        g.addColorStop(0, shade(p.color, 0.35));
+        g.addColorStop(0.6, p.color);
+        g.addColorStop(1, shade(p.color, -0.28));
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, r, a0, a1); ctx.closePath();
+        ctx.fillStyle = g; ctx.fill();
+        if (segs.length > 1) { ctx.lineWidth = 3 * dpr; ctx.strokeStyle = 'rgba(7,13,26,.55)'; ctx.stroke(); }
+        ctx.save();
+        ctx.rotate(a0 + seg / 2);
+        ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+        const fs = Math.max(14, Math.min(40, r * 0.125));
+        ctx.font = `800 ${fs}px Inter, -apple-system, system-ui, sans-serif`;
+        const light = textOn(p.color) === '#ffffff';
+        ctx.shadowColor = light ? 'rgba(0,0,0,.45)' : 'rgba(255,255,255,.25)';
+        ctx.shadowBlur = 6 * dpr; ctx.shadowOffsetY = 1 * dpr;
+        ctx.fillStyle = light ? '#ffffff' : '#111827';
+        ctx.fillText(p.name, r - r * 0.09, 0);
+        ctx.restore();
+      });
+      ctx.globalAlpha = 1;
     }
-    const seg = TAU / segs.length;
-    ctx.save(); ctx.translate(c, c); ctx.rotate(rotation);
-    segs.forEach((p, i) => {
-      const a0 = -Math.PI / 2 + i * seg, a1 = a0 + seg;
-      const dim = current && p !== current;
-      ctx.globalAlpha = dim ? 0.28 : 1;
-      ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, r, a0, a1); ctx.closePath();
-      ctx.fillStyle = p.color; ctx.fill();
-      if (segs.length > 1) { ctx.lineWidth = 4 * dpr; ctx.strokeStyle = '#ffffff'; ctx.stroke(); }
-      ctx.save();
-      ctx.rotate(a0 + seg / 2);
-      ctx.fillStyle = textOn(p.color);
-      ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-      const fs = Math.max(14, Math.min(38, r * 0.12)) ;
-      ctx.font = `800 ${fs}px Inter, -apple-system, system-ui, sans-serif`;
-      ctx.fillText(p.name, r - r * 0.1, 0);
-      ctx.restore();
-    });
     ctx.restore();
-    ctx.globalAlpha = 1;
-    ctx.beginPath(); ctx.arc(c, c, r, 0, TAU);
-    ctx.lineWidth = 6 * dpr; ctx.strokeStyle = '#e2e8f0'; ctx.stroke();
+
+    // Depth: gloss on top, shade toward the edge
+    const gloss = ctx.createRadialGradient(c, c - r * 0.55, r * 0.05, c, c, r);
+    gloss.addColorStop(0, 'rgba(255,255,255,.16)');
+    gloss.addColorStop(0.55, 'rgba(255,255,255,0)');
+    gloss.addColorStop(0.88, 'rgba(0,0,0,0)');
+    gloss.addColorStop(1, 'rgba(0,0,0,.35)');
+    ctx.beginPath(); ctx.arc(c, c, r, 0, TAU); ctx.fillStyle = gloss; ctx.fill();
+    ctx.beginPath(); ctx.arc(c, c, r, 0, TAU); ctx.lineWidth = 2 * dpr; ctx.strokeStyle = 'rgba(0,0,0,.5)'; ctx.stroke();
+
   }
   function indexAtPointer(rot, n) {
     const seg = TAU / n;
@@ -474,7 +561,10 @@
       const e = 1 - Math.pow(1 - t, 4);
       rotation = from + (to - from) * e;
       const idx = indexAtPointer(rotation, n);
-      if (idx !== lastIdx) { tick(); lastIdx = idx; }
+      if (idx !== lastIdx) {
+        tick(); lastIdx = idx;
+        const pt = $('pointer'); pt.classList.remove('bump'); void pt.getBBox(); pt.classList.add('bump');
+      }
       drawWheel();
       if (t < 1) requestAnimationFrame(frame);
       else {
@@ -598,6 +688,7 @@
     sp.className = 'speaker';
     sp.innerHTML = '';
     const dot = document.createElement('span'); dot.className = 'dot'; dot.style.background = p.color;
+    dot.style.setProperty('--c', p.color);
     sp.append(dot, document.createTextNode(p.name));
     if (p.crown) {
       const c = document.createElement('span'); c.className = 'crown'; c.textContent = '👑';
@@ -692,7 +783,6 @@
 
     // buttons
     $('hubBtn').disabled = spinning || !!current || !pool.length;
-    $('hubBtn').textContent = 'SPIN';
     $('startBtn').disabled = !current || spinning;
     $('startBtn').textContent = timer.running ? 'Pause' : (current && elapsed() > 0 ? 'Resume' : 'Start');
     $('nextBtn').disabled = spinning || !current;
@@ -713,10 +803,13 @@
         if (p.time > limit(p)) { b.classList.add('late'); state += ' (+' + fmt(p.time - limit(p)) + ')'; }
         else state = '✓ ' + state;
       }
-      const dot = document.createElement('span'); dot.className = 'dot'; dot.style.background = p.color;
+      const av = document.createElement('span'); av.className = 'av';
+      av.style.background = `linear-gradient(160deg, ${shade(p.color, 0.25)}, ${shade(p.color, -0.15)})`;
+      av.style.color = textOn(p.color) === '#ffffff' ? '#ffffff' : '#111827';
+      av.textContent = p.name[0];
       const nm = document.createElement('span'); nm.className = 'name'; nm.textContent = p.name;
       const st = document.createElement('span'); st.className = 'state'; st.textContent = state;
-      b.append(dot, nm, st);
+      b.append(av, nm, st);
       b.disabled = spinning || !(p.status === 'waiting' || p.status === 'away');
       b.title = p.status === 'away' ? 'Mark ' + p.name + ' as here' : (p.status === 'waiting' ? 'Mark ' + p.name + ' as away today' : '');
       b.addEventListener('click', () => {
@@ -762,15 +855,16 @@
       const talker = overs.length
         ? overs.reduce((a, b) => (b.time - limit(b) > a.time - limit(a) ? b : a))
         : order.reduce((a, b) => (b.time > a.time ? b : a));
-      const award = (icon, title, p, note) => {
+      const award = (icon, title, p, note, accent) => {
         const d = document.createElement('div'); d.className = 'award';
+        d.style.setProperty('--a', accent);
         d.innerHTML = `<span class="icon">${icon}</span><span><span class="aw-title">${title}</span><span class="aw-who"></span></span>`;
         d.querySelector('.aw-who').textContent = p.name + ' · ' + note;
         aw.append(d);
       };
-      award('⚡', 'Speed Run', fastest, fmt(fastest.time));
+      award('⚡', 'Speed Run', fastest, fmt(fastest.time), '#4fd1ff');
       if (talker !== fastest) {
-        award('🎤', 'Filibuster', talker, talker.time > limit(talker) ? '+' + fmt(talker.time - limit(talker)) + ' over' : fmt(talker.time));
+        award('🎤', 'Filibuster', talker, talker.time > limit(talker) ? '+' + fmt(talker.time - limit(talker)) + ' over' : fmt(talker.time), '#c084fc');
       }
     }
 
