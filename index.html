@@ -272,6 +272,8 @@
   .crown-drop { position: fixed; left: 0; top: 0; z-index: 31; pointer-events: none; line-height: 1; filter: drop-shadow(0 8px 18px rgba(0,0,0,.45)); transition: filter .4s; }
   .crown-drop.glow { filter: drop-shadow(0 0 28px rgba(255,210,63,.95)) drop-shadow(0 0 60px rgba(255,190,0,.6)); }
   #fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 30; }
+  #spot { position: fixed; inset: 0; z-index: 29; pointer-events: none; opacity: 0; }
+  #spot .beam { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,244,214,.20), rgba(255,244,214,.05)); mix-blend-mode: screen; filter: blur(10px); }
 
   @media (max-width: 900px) {
     header { flex-wrap: wrap; padding: 16px 18px 10px; }
@@ -376,6 +378,7 @@
   </div>
 </div>
 
+<div id="spot" aria-hidden="true"><div class="beam"></div></div>
 <canvas id="fx" aria-hidden="true"></canvas>
 
 <script>
@@ -487,6 +490,38 @@
   const tick = () => tone(1400, 0, 0.03, 0.06, 'square');
   const landed = () => { tone(660, 0, 0.12); tone(990, 0.1, 0.22); };
   const timesUp = () => { tone(880, 0, 0.18, 0.25); tone(880, 0.28, 0.18, 0.25); tone(880, 0.56, 0.35, 0.25); };
+  function glide(f1, f2, start, dur, vol = 0.1, type = 'sine') {
+    if (!soundOn || !audio) return;
+    const t = audio.currentTime + start;
+    const o = audio.createOscillator(), g = audio.createGain();
+    o.type = type; o.frequency.setValueAtTime(f1, t); o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + 0.03);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(audio.destination);
+    o.start(t); o.stop(t + dur + 0.02);
+  }
+  let noiseBuf = null;
+  function noise(start, dur, vol, type = 'bandpass', freq = 1500, q = 1) {
+    if (!soundOn || !audio) return;
+    if (!noiseBuf) {
+      noiseBuf = audio.createBuffer(1, audio.sampleRate, audio.sampleRate);
+      const ch = noiseBuf.getChannelData(0);
+      for (let i = 0; i < ch.length; i++) ch[i] = Math.random() * 2 - 1;
+    }
+    const t = audio.currentTime + start;
+    const src = audio.createBufferSource(), f = audio.createBiquadFilter(), g = audio.createGain();
+    src.buffer = noiseBuf; f.type = type; f.frequency.value = freq; f.Q.value = q;
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(f).connect(g).connect(audio.destination);
+    src.start(t, rand() * 0.8); src.stop(t + dur + 0.02);
+  }
+  const whistle = () => glide(450, 1400, 0, 0.75, 0.035);
+  const boom = () => { noise(0, 0.6, 0.55, 'lowpass', 420, 0.7); for (let i = 0; i < 7; i++) noise(0.18 + rand() * 0.6, 0.035, 0.1, 'highpass', 4500); };
+  const clapping = secs => { for (let i = 0; i < secs * 30; i++) noise(rand() * secs, 0.05, 0.1 + rand() * 0.14, 'bandpass', 1000 + rand() * 1000, 1.3); };
+  const pop = () => noise(0, 0.14, 0.5, 'bandpass', 800, 0.8);
+  const partyHorn = () => { glide(300, 560, 0.05, 0.28, 0.06, 'sawtooth'); glide(560, 320, 0.36, 0.3, 0.05, 'sawtooth'); };
+  const shimmer = () => [784, 988, 1175, 1568].forEach((f, i) => tone(f, i * 0.07, 0.7, 0.07, 'triangle'));
 
   // ---- Wheel --------------------------------------------------------------
   function sizeCanvas() {
@@ -606,35 +641,47 @@
     })();
   }
 
-  // ---- Confetti -----------------------------------------------------------
+  // ---- Celebrations -------------------------------------------------------
+  // Dave always gets the crown drop. Everyone else gets one of these, and nobody
+  // gets the same one twice in a row: confetti, fireworks, spotlight, applause, party.
   const fx = $('fx'), fctx = fx.getContext('2d');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const PARTY = ['#0CA0E2', '#1AE50A', '#FF9515', '#FF0600', '#887AF9', '#1192ef', '#ffd23f'];
   const CROWNS = ['👑', '👑', '👑', '✨', '✨'];
+  const EMOJI_FONT = '"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif';
+  const pick = list => list[Math.floor(rand() * list.length)];
   let parts = [], fxOn = false, fxDpr = 1;
   function sizeFx() {
     fxDpr = window.devicePixelRatio || 1;
     fx.width = Math.round(innerWidth * fxDpr); fx.height = Math.round(innerHeight * fxDpr);
   }
-  function addPiece(x, y, vx, vy, colors) {
+  // One particle list for everything. Positions and speeds come in CSS pixels.
+  function add(o) {
+    const d = fxDpr;
     parts.push({
-      x: x * fxDpr, y: y * fxDpr, vx: vx * fxDpr, vy: vy * fxDpr,
-      w: (6 + rand() * 6) * fxDpr, h: (8 + rand() * 8) * fxDpr,
-      rot: rand() * TAU, vr: (rand() - 0.5) * 0.35, wob: rand() * TAU,
-      color: colors[Math.floor(rand() * colors.length)],
-      round: rand() < 0.25,
-      size: (22 + rand() * 16) * fxDpr,
+      kind: 'confetti', g: 1, drag: 0.985, sway: 0.6, life: null, decay: 0,
+      rot: rand() * TAU, vr: (rand() - 0.5) * 0.35, wob: rand() * TAU, round: rand() < 0.25,
+      ...o,
+      x: o.x * d, y: o.y * d, vx: (o.vx || 0) * d, vy: (o.vy || 0) * d,
+      w: (6 + rand() * 6) * d, h: (8 + rand() * 8) * d,
+      size: (o.size || 22 + rand() * 16) * d,
+      r: (o.r || 2) * d,
     });
   }
-  function burst(x, y, colors, count = 140, power = 13) {
+  function addPiece(x, y, vx, vy, colors) {
+    const c = pick(colors);
+    add({ x, y, vx, vy, color: c, kind: c[0] === '#' ? 'confetti' : 'emoji' });
+  }
+  // A cone of pieces fired from (x, y). angle is in radians, -PI/2 is straight up.
+  function cannon(x, y, angle, spread, colors, count, power) {
     if (reduceMotion) return;
     for (let i = 0; i < count; i++) {
-      const a = -Math.PI / 2 + (rand() - 0.5) * Math.PI * 1.1;
-      const s = power * (0.45 + rand() * 0.75);
+      const a = angle + (rand() - 0.5) * spread, s = power * (0.45 + rand() * 0.75);
       addPiece(x, y, Math.cos(a) * s, Math.sin(a) * s, colors);
     }
     runFx();
   }
+  function burst(x, y, colors, count = 140, power = 13) { cannon(x, y, -Math.PI / 2, Math.PI * 1.1, colors, count, power); }
   function shower(count = 260) {
     if (reduceMotion) return;
     for (let i = 0; i < count; i++) {
@@ -643,37 +690,172 @@
     burst(innerWidth * 0.15, innerHeight, PARTY, 90, 22);
     burst(innerWidth * 0.85, innerHeight, PARTY, 90, 22);
   }
+  function explode(p, out) {
+    const d = fxDpr, x = p.x / d, y = p.y / d;
+    const n = 95 + Math.floor(rand() * 35), speed = 5.6 + rand() * 2.4;
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * TAU + rand() * 0.12, s = speed * (0.55 + rand() * 0.5);
+      out.push({ kind: 'spark', x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, g: 0.16, drag: 0.955, sway: 0,
+        life: 1, decay: 0.010 + rand() * 0.01, color: pick(p.colors), r: 1.6 + rand() * 1.3, twinkle: rand() < 0.35 });
+    }
+    out.push({ kind: 'flash', x, y, g: 0, sway: 0, life: 1, decay: 0.07, r: 60 });
+    boom();
+  }
+  function draw(p) {
+    const a = p.life === null ? 1 : Math.max(0, Math.min(1, p.life));
+    fctx.globalAlpha = p.twinkle ? a * (0.45 + 0.55 * rand()) : a;
+    if (p.kind === 'spark' || p.kind === 'rocket') {
+      fctx.globalCompositeOperation = 'lighter';
+      fctx.strokeStyle = fctx.fillStyle = p.color; fctx.lineCap = 'round'; fctx.lineWidth = p.r;
+      fctx.beginPath(); fctx.moveTo(p.x - p.vx * 3, p.y - p.vy * 3); fctx.lineTo(p.x, p.y); fctx.stroke();
+      fctx.globalAlpha *= 0.22;
+      fctx.beginPath(); fctx.arc(p.x, p.y, p.r * 2.8, 0, TAU); fctx.fill();
+      fctx.globalCompositeOperation = 'source-over';
+    } else if (p.kind === 'flash') {
+      const g = fctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+      g.addColorStop(0, 'rgba(255,255,255,.95)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+      fctx.globalCompositeOperation = 'lighter'; fctx.fillStyle = g;
+      fctx.beginPath(); fctx.arc(p.x, p.y, p.r, 0, TAU); fctx.fill();
+      fctx.globalCompositeOperation = 'source-over';
+    } else if (p.kind === 'emoji') {
+      const s = p.pulse ? p.size * (1 + 0.16 * Math.sin(p.wob * 3)) : p.size;
+      fctx.save(); fctx.translate(p.x, p.y);
+      fctx.rotate(p.upright ? Math.sin(p.wob) * 0.18 : p.rot * 0.2);
+      fctx.font = `${s}px ${EMOJI_FONT}`; fctx.textAlign = 'center'; fctx.textBaseline = 'middle';
+      fctx.fillText(p.color, 0, 0);
+      fctx.restore();
+    } else {
+      fctx.save(); fctx.translate(p.x, p.y); fctx.rotate(p.rot); fctx.fillStyle = p.color;
+      if (p.round) { fctx.beginPath(); fctx.arc(0, 0, p.w / 2, 0, TAU); fctx.fill(); }
+      else fctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * Math.abs(Math.cos(p.wob)));
+      fctx.restore();
+    }
+    fctx.globalAlpha = 1;
+  }
   function runFx() {
     if (fxOn) return;
     fxOn = true;
     (function step() {
-      fctx.clearRect(0, 0, fx.width, fx.height);
-      parts = parts.filter(p => p.y < fx.height + 40 * fxDpr);
+      const d = fxDpr, W = fx.width, H = fx.height, born = [];
+      fctx.clearRect(0, 0, W, H);
+      parts = parts.filter(p => !p.dead && (p.life === null || p.life > 0) &&
+        p.y < H + 60 * d && p.y > -240 * d && p.x > -140 * d && p.x < W + 140 * d);
       for (const p of parts) {
-        p.vy += 0.32 * fxDpr; p.vx *= 0.985; p.vy *= 0.985;
-        p.x += p.vx + Math.sin(p.wob += 0.08) * 0.6 * fxDpr; p.y += p.vy; p.rot += p.vr;
-        fctx.save(); fctx.translate(p.x, p.y); fctx.rotate(p.rot);
-        fctx.fillStyle = p.color;
-        if (p.color[0] !== '#') {   // emoji piece (crowns, sparkles)
-          fctx.rotate(-p.rot * 0.8);
-          fctx.font = `${p.size}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
-          fctx.textAlign = 'center'; fctx.textBaseline = 'middle';
-          fctx.fillText(p.color, 0, 0);
-        } else if (p.round) { fctx.beginPath(); fctx.arc(0, 0, p.w / 2, 0, TAU); fctx.fill(); }
-        else fctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * Math.abs(Math.cos(p.wob)));
-        fctx.restore();
+        p.vy += 0.32 * d * p.g; p.vx *= p.drag; p.vy *= p.drag;
+        p.x += p.vx + Math.sin(p.wob += 0.08) * p.sway * d; p.y += p.vy; p.rot += p.vr;
+        if (p.life !== null) p.life -= p.decay;
+        if (p.kind === 'rocket') {
+          born.push({ kind: 'spark', x: p.x / d, y: p.y / d, vx: (rand() - 0.5) * 0.6, vy: 0.6, g: 0.05, drag: 0.92,
+            sway: 0, life: 0.7, decay: 0.045, color: '#ffcf8a', r: 1.3 });
+          if (p.vy >= 0) { p.dead = true; explode(p, born); }
+        }
+        if (!p.dead) draw(p);
       }
-      if (parts.length) requestAnimationFrame(step);
-      else { fxOn = false; fctx.clearRect(0, 0, fx.width, fx.height); }
+      born.forEach(add);
+      if (parts.length || born.length) requestAnimationFrame(step);
+      else { fxOn = false; fctx.clearRect(0, 0, W, H); }
     })();
   }
-  function celebrate(p) {
-    if (p.crown) { crownDrop(); return; }
+
+  // 1. Confetti: a pop at the name and over the wheel.
+  function confetti(p) {
     const r = $('speaker').getBoundingClientRect();
     const colors = [p.color, p.color, '#ffffff', '#1192ef', '#ffd23f'];
     burst(r.left + r.width / 2, r.top + r.height / 2, colors, 140, 13);
     const w = canvas.getBoundingClientRect();
     burst(w.left + w.width / 2, w.top + 4, colors, 60, 9);
+  }
+  // 2. Fireworks: rockets climb from the bottom and burst in the speaker's colour and gold.
+  function fireworks(p, count = 5) {
+    if (reduceMotion) return;
+    const colors = [p.color, p.color, shade(p.color, 0.45), '#ffd23f', '#ffffff'];
+    for (let i = 0; i < count; i++) setTimeout(() => {
+      const W = innerWidth, H = innerHeight;
+      const tx = W * (0.12 + 0.76 * (i + rand()) / count), ty = H * (0.12 + 0.3 * rand());
+      const sx = tx + (rand() - 0.5) * W * 0.16, a = 0.32 * 0.4, v = Math.sqrt(2 * a * (H - ty));
+      add({ kind: 'rocket', x: sx, y: H + 8, vx: (tx - sx) / (v / a), vy: -v, g: 0.4, drag: 1, sway: 0,
+        color: '#fff1d0', r: 2.4, colors });
+      whistle(); runFx();
+    }, i * 360 + rand() * 180);
+  }
+  // 3. Spotlight: the room goes dark and a stage light sweeps in and lands on the name.
+  let spotRun = 0;
+  function spotlight(p) {
+    if (reduceMotion) return;
+    const run = ++spotRun, spot = $('spot'), beam = spot.firstElementChild;
+    const r = $('speaker').getBoundingClientRect();
+    const tx = r.left + r.width / 2, ty = r.top + r.height / 2;
+    const rx = Math.max(170, r.width * 0.8), ry = Math.max(95, r.height * 1.7);
+    const fromLeft = rand() < 0.5;
+    const sx = fromLeft ? innerWidth * 0.1 : innerWidth * 0.9, sy = innerHeight * 0.72;
+    const lampX = tx + (fromLeft ? -1 : 1) * innerWidth * 0.22;
+    const DUR = 3400, t0 = performance.now();
+    const easeOut = k => 1 - Math.pow(1 - k, 3);
+    let lit = false;
+    tone(70, 0, 0.3, 0.3, 'triangle');   // the clunk of a stage light switching on
+    (function frame() {
+      if (run !== spotRun) return;
+      const t = Math.min(1, (performance.now() - t0) / DUR);
+      const fade = t < 0.1 ? t / 0.1 : t > 0.8 ? (1 - t) / 0.2 : 1;
+      const k = easeOut(Math.min(1, Math.max(0, (t - 0.06) / 0.36)));
+      const x = sx + (tx - sx) * k, y = sy + (ty - sy) * k + Math.sin(k * Math.PI) * -60;
+      const grow = 1.5 - 0.5 * k, ex = rx * grow, ey = ry * grow;
+      spot.style.opacity = fade;
+      spot.style.background = `radial-gradient(${ex}px ${ey}px at ${x}px ${y}px, rgba(255,246,222,.16) 0%, rgba(255,246,222,.06) 58%, rgba(3,7,16,.86) 100%)`;
+      beam.style.clipPath = `polygon(${lampX - 16}px -10px, ${lampX + 16}px -10px, ${x + ex * 0.78}px ${y}px, ${x - ex * 0.78}px ${y}px)`;
+      if (!lit && k >= 0.99) {
+        lit = true;
+        burst(tx, ty, ['✨', '⭐', '#ffd23f', '#ffffff', p.color], 46, 8);
+        shimmer();
+      }
+      if (t < 1) requestAnimationFrame(frame);
+      else { spot.style.opacity = 0; spot.style.background = ''; }
+    })();
+  }
+  // 4. Applause: waves of clapping hands rise up the screen, with a crowd clapping.
+  function applause(p) {
+    if (reduceMotion) return;
+    const HANDS = ['👏', '👏', '👏', '👏', '🙌', '👏🏽', '👏🏻', '👏🏾'];
+    for (let i = 0; i < 36; i++) setTimeout(() => {
+      add({ kind: 'emoji', color: pick(HANDS), x: innerWidth * (0.04 + 0.92 * rand()), y: innerHeight + 30,
+        vx: (rand() - 0.5) * 1.2, vy: -(7 + rand() * 5), g: 0.12, drag: 0.99, sway: 0.8,
+        life: 1.25, decay: 0.008, size: 34 + rand() * 28, upright: true, pulse: true });
+      runFx();
+    }, i * 55);
+    const r = $('speaker').getBoundingClientRect();
+    burst(r.left + r.width / 2, r.top + r.height / 2, ['⭐', '✨', p.color, '#ffd23f'], 30, 7);
+    clapping(2.2);
+  }
+  // 5. Party: poppers fire in from both corners and balloons float up.
+  function party(p) {
+    if (reduceMotion) return;
+    const W = innerWidth, H = innerHeight, colors = [p.color, p.color, ...PARTY, '🎉'];
+    cannon(0, H, -Math.PI / 3, 0.5, colors, 110, 24);
+    cannon(W, H, -Math.PI * 2 / 3, 0.5, colors, 110, 24);
+    pop(); setTimeout(pop, 90); partyHorn();
+    const BALLOONS = ['🎈', '🎈', '🎈', '🎈', '🎁', '🎊'];
+    for (let i = 0; i < 16; i++) setTimeout(() => {
+      add({ kind: 'emoji', color: pick(BALLOONS), x: W * (0.06 + 0.88 * rand()), y: H + 40,
+        vx: (rand() - 0.5) * 0.6, vy: -(2.6 + rand() * 2.2), g: 0, drag: 1, sway: 1.3,
+        size: 42 + rand() * 26, upright: true });
+      runFx();
+    }, 150 + i * 110);
+  }
+
+  const EFFECTS = { confetti, fireworks, spotlight, applause, party };
+  const forcedFx = new URLSearchParams(location.search).get('fx');   // e.g. ?fx=fireworks to preview one
+  let fxBag = [], lastFx = null;
+  function nextEffect() {
+    if (EFFECTS[forcedFx]) return forcedFx;
+    if (!fxBag.length) {                       // shuffle all five, so a round rarely repeats one
+      fxBag = Object.keys(EFFECTS).sort(() => rand() - 0.5);
+      if (fxBag[fxBag.length - 1] === lastFx) fxBag.unshift(fxBag.pop());
+    }
+    return (lastFx = fxBag.pop());
+  }
+  function celebrate(p) {
+    if (p.crown) { crownDrop(); return; }     // Dave keeps his crown
+    EFFECTS[nextEffect()](p);
   }
 
   // A big crown drops in, bounces, glows, then flies onto Dave's name.
@@ -900,7 +1082,7 @@
 
     $('overlay').classList.add('show');
     $('againBtn').focus();
-    shower();
+    shower(); fireworks({ color: PARTY[Math.floor(rand() * PARTY.length)] }, 4);   // grand finale
   }
 
   // ---- Events -------------------------------------------------------------
