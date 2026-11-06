@@ -78,7 +78,7 @@
 
   /* Wheel */
   .wheel-card { grid-area: wheel; display: flex; align-items: center; justify-content: center; padding: 26px; }
-  .wheel-wrap { position: relative; width: min(100%, 60vh); aspect-ratio: 1; }
+  .wheel-wrap { position: relative; width: min(100%, 56vh); aspect-ratio: 1; }
   .wheel-wrap canvas { width: 100%; height: 100%; display: block; }
   .pointer {
     position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
@@ -107,7 +107,7 @@
   .speaker.pop { animation: pop .45s ease-out; }
   @keyframes pop { 0% { transform: scale(.6); opacity: 0; } 70% { transform: scale(1.08); opacity: 1; } 100% { transform: scale(1); } }
 
-  .ring-wrap { position: relative; width: clamp(200px, 36vh, 330px); aspect-ratio: 1; margin: 16px 0 20px; }
+  .ring-wrap { position: relative; width: clamp(190px, 32vh, 320px); aspect-ratio: 1; margin: 12px 0 16px; }
   .ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
   .ring-track { fill: none; stroke: var(--slate-100); stroke-width: 12; }
   .ring-bar { fill: none; stroke: var(--ring); stroke-width: 12; stroke-linecap: round; transition: stroke-dashoffset .12s linear, stroke .3s; }
@@ -180,6 +180,43 @@
   .summary .t.away { color: var(--slate-500); font-weight: 500; }
   .summary .actions { display: flex; gap: 10px; justify-content: flex-end; }
 
+  .quip { min-height: 1.4em; margin-top: 4px; font-size: clamp(15px, 2.2vh, 19px); font-weight: 500; color: var(--dark-2); }
+  .quip.pop { animation: fadeUp .5s .15s ease-out both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .over .digits .time { animation: shake 3s ease-in-out infinite; }
+  @keyframes shake {
+    0%, 14%, 100% { transform: translateX(0) rotate(0); }
+    2%  { transform: translateX(-7px) rotate(-2deg); }
+    4%  { transform: translateX(7px)  rotate(2deg); }
+    6%  { transform: translateX(-6px) rotate(-1.5deg); }
+    8%  { transform: translateX(6px)  rotate(1.5deg); }
+    10% { transform: translateX(-3px); }
+    12% { transform: translateX(3px); }
+  }
+
+  .speaker .crown { opacity: 0; display: inline-block; margin-left: -4px; }
+  .speaker .crown.shown { opacity: 1; animation: crownSettle .5s ease-out; }
+  @keyframes crownSettle { 0% { transform: scale(1.5) rotate(-10deg); } 60% { transform: scale(.9) rotate(4deg); } 100% { transform: none; } }
+  .crown-drop {
+    position: fixed; left: 0; top: 0; z-index: 31; pointer-events: none; line-height: 1;
+    filter: drop-shadow(0 8px 18px rgba(0,0,0,.25));
+    transition: filter .4s;
+  }
+  .crown-drop.glow { filter: drop-shadow(0 0 28px rgba(255,210,63,.95)) drop-shadow(0 0 60px rgba(255,190,0,.6)); }
+
+  #fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 30; }
+
+  .awards { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+  .awards:empty { display: none; }
+  .award {
+    flex: 1 1 200px; display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; border-radius: 14px; background: var(--slate-50); border: 1px solid var(--slate-200);
+  }
+  .award .icon { font-size: 26px; line-height: 1; }
+  .award .aw-title { display: block; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--slate-500); }
+  .award .aw-who { display: block; font-size: 16px; font-weight: 700; margin-top: 2px; }
+
   @media (max-width: 900px) {
     header { flex-wrap: wrap; padding: 16px 18px 10px; }
     .divider { display: none; }
@@ -189,7 +226,7 @@
     .team-hint { margin-left: 0; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .speaker.pop, .over .ring-bar { animation: none; }
+    .speaker.pop, .quip.pop, .over .ring-bar, .over .digits .time { animation: none; }
   }
 </style>
 </head>
@@ -228,6 +265,7 @@
   <section class="card timer-card" id="timerCard" aria-label="Timer">
     <div class="label" id="speakerLabel">Up now</div>
     <div class="speaker muted" id="speaker" aria-live="polite">Spin the wheel to start</div>
+    <div class="quip" id="quip" aria-live="polite"></div>
     <div class="ring-wrap">
       <svg viewBox="0 0 200 200" aria-hidden="true">
         <circle class="ring-track" cx="100" cy="100" r="88"></circle>
@@ -249,7 +287,7 @@
   <section class="card team-card" aria-label="Team">
     <div class="team-title">Team</div>
     <div class="chips" id="chips"></div>
-    <div class="team-hint">Click a name to mark them away today</div>
+    <div class="team-hint">Click a name to mark them away</div>
   </section>
 </main>
 
@@ -257,6 +295,7 @@
   <div class="card summary">
     <h2 id="sumTitle">Stand up done</h2>
     <div class="total" id="sumTotal"></div>
+    <div class="awards" id="awards"></div>
     <ol id="sumList"></ol>
     <div class="actions">
       <button class="btn btn-ghost" id="closeSumBtn">Close</button>
@@ -265,12 +304,14 @@
   </div>
 </div>
 
+<canvas id="fx" aria-hidden="true"></canvas>
+
 <script>
 (() => {
   // ---- Settings -----------------------------------------------------------
   const TURN_SECONDS = 90;
   const TEAM = [
-    { name: 'Dave',     color: '#0CA0E2' },
+    { name: 'Dave',     color: '#0CA0E2', seconds: 3600, crown: true },   // the boss gets an hour 👑
     { name: 'Norvylle', color: '#1AE50A' },
     { name: 'Jack',     color: '#FF9515' },
     { name: 'Harry',    color: '#FF0600' },
@@ -305,6 +346,31 @@
   // ---- Helpers ------------------------------------------------------------
   const waiting = () => people.filter(p => p.status === 'waiting');
   const onWheel = () => people.filter(p => p.status === 'waiting' || p.status === 'speaking');
+  const limit = p => (p && p.seconds) || TURN_SECONDS;
+  const QUIPS = [
+    'The wheel has spoken.',
+    'You\'re up. No pressure.',
+    'Unmute, it\'s your turn.',
+    'Yesterday, today, blockers. Go!',
+    'The floor is yours.',
+    'Lights, camera, stand up.',
+    'Short and sweet, please.',
+    'Mic check, one two.',
+    'Fresh off the wheel.',
+    '90 seconds of fame starts now.',
+  ];
+  const DAVE_QUIPS = [
+    'Gets the full hour. Get comfy, everyone.',
+    'Keynote mode on. Grab a coffee.',
+    'Rules are for other people.',
+    'One hour on the clock. Obviously.',
+  ];
+  let lastQuip = '';
+  function pickQuip(p) {
+    const list = p.crown ? DAVE_QUIPS : QUIPS;
+    let q; do { q = list[Math.floor(rand() * list.length)]; } while (q === lastQuip && list.length > 1);
+    return (lastQuip = q);
+  }
   const elapsed = () => timer.before + (timer.running ? (performance.now() - timer.startedAt) / 1000 : 0);
   function fmt(sec) {
     sec = Math.max(0, Math.floor(sec));
@@ -419,6 +485,111 @@
     })();
   }
 
+  // ---- Confetti -----------------------------------------------------------
+  const fx = $('fx'), fctx = fx.getContext('2d');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const PARTY = ['#0CA0E2', '#1AE50A', '#FF9515', '#FF0600', '#887AF9', '#1192ef', '#ffd23f'];
+  const CROWNS = ['👑', '👑', '👑', '✨', '✨'];
+  let parts = [], fxOn = false, fxDpr = 1;
+  function sizeFx() {
+    fxDpr = window.devicePixelRatio || 1;
+    fx.width = Math.round(innerWidth * fxDpr); fx.height = Math.round(innerHeight * fxDpr);
+  }
+  function addPiece(x, y, vx, vy, colors) {
+    parts.push({
+      x: x * fxDpr, y: y * fxDpr, vx: vx * fxDpr, vy: vy * fxDpr,
+      w: (6 + rand() * 6) * fxDpr, h: (8 + rand() * 8) * fxDpr,
+      rot: rand() * TAU, vr: (rand() - 0.5) * 0.35, wob: rand() * TAU,
+      color: colors[Math.floor(rand() * colors.length)],
+      round: rand() < 0.25,
+      size: (22 + rand() * 16) * fxDpr,
+    });
+  }
+  function burst(x, y, colors, count = 140, power = 13) {
+    if (reduceMotion) return;
+    for (let i = 0; i < count; i++) {
+      const a = -Math.PI / 2 + (rand() - 0.5) * Math.PI * 1.1;
+      const s = power * (0.45 + rand() * 0.75);
+      addPiece(x, y, Math.cos(a) * s, Math.sin(a) * s, colors);
+    }
+    runFx();
+  }
+  function shower(count = 260) {
+    if (reduceMotion) return;
+    for (let i = 0; i < count; i++) {
+      addPiece(rand() * innerWidth, -20 - rand() * innerHeight * 0.6, (rand() - 0.5) * 3, 2 + rand() * 4, PARTY);
+    }
+    burst(innerWidth * 0.15, innerHeight, PARTY, 90, 22);
+    burst(innerWidth * 0.85, innerHeight, PARTY, 90, 22);
+  }
+  function runFx() {
+    if (fxOn) return;
+    fxOn = true;
+    (function step() {
+      fctx.clearRect(0, 0, fx.width, fx.height);
+      parts = parts.filter(p => p.y < fx.height + 40 * fxDpr);
+      for (const p of parts) {
+        p.vy += 0.32 * fxDpr; p.vx *= 0.985; p.vy *= 0.985;
+        p.x += p.vx + Math.sin(p.wob += 0.08) * 0.6 * fxDpr; p.y += p.vy; p.rot += p.vr;
+        fctx.save(); fctx.translate(p.x, p.y); fctx.rotate(p.rot);
+        fctx.fillStyle = p.color;
+        if (p.color[0] !== '#') {   // emoji piece (crowns, sparkles)
+          fctx.rotate(-p.rot * 0.8);
+          fctx.font = `${p.size}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
+          fctx.textAlign = 'center'; fctx.textBaseline = 'middle';
+          fctx.fillText(p.color, 0, 0);
+        } else if (p.round) { fctx.beginPath(); fctx.arc(0, 0, p.w / 2, 0, TAU); fctx.fill(); }
+        else fctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * Math.abs(Math.cos(p.wob)));
+        fctx.restore();
+      }
+      if (parts.length) requestAnimationFrame(step);
+      else { fxOn = false; fctx.clearRect(0, 0, fx.width, fx.height); }
+    })();
+  }
+  function celebrate(p) {
+    if (p.crown) { crownDrop(); return; }
+    const r = $('speaker').getBoundingClientRect();
+    const colors = [p.color, p.color, '#ffffff', '#1192ef', '#ffd23f'];
+    burst(r.left + r.width / 2, r.top + r.height / 2, colors, 140, 13);
+    const w = canvas.getBoundingClientRect();
+    burst(w.left + w.width / 2, w.top + 4, colors, 60, 9);
+  }
+
+  // A big crown drops in, bounces, glows, then flies onto Dave's name.
+  function crownDrop() {
+    const target = $('speaker').querySelector('.crown');
+    if (!target) return;
+    if (reduceMotion || !document.body.animate) { target.classList.add('shown'); return; }
+    const el = document.createElement('div');
+    el.className = 'crown-drop'; el.textContent = '👑';
+    document.body.append(el);
+    const SIZE = Math.min(220, innerHeight * 0.3);
+    el.style.fontSize = SIZE + 'px';
+    const cx = innerWidth / 2, cy = innerHeight * 0.45;
+    const sp = $('speaker');
+    sp.style.animation = 'none';               // measure where the crown ends up, not mid-pop
+    const tr = target.getBoundingClientRect();
+    sp.style.animation = '';
+    const tx = tr.left + tr.width / 2, ty = tr.top + tr.height / 2;
+    const at = (x, y, s = 1, r = 0) => `translate(${x}px, ${y}px) translate(-50%, -50%) scale(${s}) rotate(${r}deg)`;
+    const anim = el.animate([
+      { transform: at(cx, -SIZE, 1, -25), offset: 0 },
+      { transform: at(cx, cy, 1, 6),      offset: 0.22, easing: 'ease-out' },
+      { transform: at(cx, cy - 50, 1.05, -4), offset: 0.3, easing: 'ease-in' },
+      { transform: at(cx, cy, 1, 0),      offset: 0.38, easing: 'ease-out' },
+      { transform: at(cx, cy, 1.15, 0),   offset: 0.55 },
+      { transform: at(cx, cy, 1.1, 0),    offset: 0.72, easing: 'ease-in' },
+      { transform: at(tx, ty, (tr.height || 40) / SIZE * 1.15, 0), offset: 1 },
+    ], { duration: 2800, fill: 'forwards' });
+    el.animate([{ opacity: 0 }, { opacity: 1, offset: 0.08 }, { opacity: 1 }], { duration: 2800, fill: 'forwards' });
+    setTimeout(() => {   // the landing: a burst of little crowns and sparkles
+      burst(cx, cy, CROWNS, 46, 15);
+      el.classList.add('glow');
+      tone(523, 0, 0.18, 0.2); tone(659, 0.12, 0.18, 0.2); tone(784, 0.24, 0.18, 0.2); tone(1047, 0.36, 0.45, 0.22, 'triangle');
+    }, 620);
+    anim.onfinish = () => { el.remove(); target.classList.add('shown'); };
+  }
+
   // ---- Turns --------------------------------------------------------------
   function select(p) {
     current = p; p.status = 'speaking';
@@ -428,8 +599,16 @@
     sp.innerHTML = '';
     const dot = document.createElement('span'); dot.className = 'dot'; dot.style.background = p.color;
     sp.append(dot, document.createTextNode(p.name));
+    if (p.crown) {
+      const c = document.createElement('span'); c.className = 'crown'; c.textContent = '👑';
+      sp.append(c);
+    }
     void sp.offsetWidth; sp.classList.add('pop');
-    render();
+    const q = $('quip');
+    q.textContent = pickQuip(p);
+    q.classList.remove('pop'); void q.offsetWidth; q.classList.add('pop');
+    celebrate(p);
+    startTimer();   // auto-start as soon as the wheel lands
   }
   function finishCurrent() {
     if (!current) return;
@@ -470,14 +649,15 @@
     if (!current) return;
     stopTimer();
     timer = { running: false, before: 0, startedAt: 0, beeped: false };
-    render();
+    startTimer();
   }
   function toggleTimer() { timer.running ? pauseTimer() : startTimer(); }
 
   function updateTimer() {
     const card = $('timerCard');
     const e = current ? elapsed() : 0;
-    const left = TURN_SECONDS - e;
+    const max = limit(current);
+    const left = max - e;
     card.classList.remove('warn', 'crit', 'over');
     if (current && left <= 0) {
       card.classList.add('over');
@@ -490,7 +670,7 @@
       else if (current && left <= WARN_AT) card.classList.add('warn');
       $('time').textContent = fmt(Math.ceil(left));
       $('timeSub').textContent = !current ? '90 seconds each' : (timer.running ? 'left' : (e > 0 ? 'Paused' : 'Press Start'));
-      $('ringBar').style.strokeDashoffset = RING_C * (1 - Math.max(0, left) / TURN_SECONDS);
+      $('ringBar').style.strokeDashoffset = RING_C * (1 - Math.max(0, left) / max);
     }
     // live time on the speaking chip
     const chip = document.querySelector('.chip.speaking .state');
@@ -504,6 +684,7 @@
 
     // header label
     $('speakerLabel').textContent = current ? 'Up now' : (spinning ? 'Picking…' : (order.length ? 'Next' : 'Up first'));
+    if (!current) $('quip').textContent = '';
     if (!current && !spinning) {
       $('speaker').className = 'speaker muted';
       $('speaker').textContent = allDone ? 'Everyone has been' : (pool.length ? 'Spin the wheel' : 'Nobody here today');
@@ -529,7 +710,7 @@
       if (p.status === 'speaking') state = 'Speaking · ' + fmt(elapsed());
       if (p.status === 'done') {
         state = fmt(p.time);
-        if (p.time > TURN_SECONDS) { b.classList.add('late'); state += ' (+' + fmt(p.time - TURN_SECONDS) + ')'; }
+        if (p.time > limit(p)) { b.classList.add('late'); state += ' (+' + fmt(p.time - limit(p)) + ')'; }
         else state = '✓ ' + state;
       }
       const dot = document.createElement('span'); dot.className = 'dot'; dot.style.background = p.color;
@@ -559,8 +740,8 @@
     order.forEach((p, i) => {
       total += p.time;
       const li = document.createElement('li');
-      const late = p.time > TURN_SECONDS;
-      li.innerHTML = `<span class="n">${i + 1}</span><span class="dot" style="background:${p.color}"></span><span class="who"></span><span class="t${late ? ' late' : ''}">${fmt(p.time)}${late ? ' (+' + fmt(p.time - TURN_SECONDS) + ')' : ''}</span>`;
+      const late = p.time > limit(p);
+      li.innerHTML = `<span class="n">${i + 1}</span><span class="dot" style="background:${p.color}"></span><span class="who"></span><span class="t${late ? ' late' : ''}">${fmt(p.time)}${late ? ' (+' + fmt(p.time - limit(p)) + ')' : ''}</span>`;
       li.querySelector('.who').textContent = p.name;
       list.append(li);
     });
@@ -570,10 +751,32 @@
       li.querySelector('.who').textContent = p.name;
       list.append(li);
     });
-    const over = order.filter(p => p.time > TURN_SECONDS).length;
-    $('sumTotal').textContent = `Total talk time ${fmt(total)}` + (over ? ` · ${over} went over 1:30` : ' · everyone kept to time');
+    const over = order.filter(p => p.time > limit(p)).length;
+    $('sumTotal').textContent = `Total talk time ${fmt(total)}` + (over ? ` · ${over} went over time` : ' · everyone kept to time');
+
+    // Awards
+    const aw = $('awards'); aw.innerHTML = '';
+    if (order.length >= 2) {
+      const fastest = order.reduce((a, b) => (b.time < a.time ? b : a));
+      const overs = order.filter(p => p.time > limit(p));
+      const talker = overs.length
+        ? overs.reduce((a, b) => (b.time - limit(b) > a.time - limit(a) ? b : a))
+        : order.reduce((a, b) => (b.time > a.time ? b : a));
+      const award = (icon, title, p, note) => {
+        const d = document.createElement('div'); d.className = 'award';
+        d.innerHTML = `<span class="icon">${icon}</span><span><span class="aw-title">${title}</span><span class="aw-who"></span></span>`;
+        d.querySelector('.aw-who').textContent = p.name + ' · ' + note;
+        aw.append(d);
+      };
+      award('⚡', 'Speed Run', fastest, fmt(fastest.time));
+      if (talker !== fastest) {
+        award('🎤', 'Filibuster', talker, talker.time > limit(talker) ? '+' + fmt(talker.time - limit(talker)) + ' over' : fmt(talker.time));
+      }
+    }
+
     $('overlay').classList.add('show');
     $('againBtn').focus();
+    shower();
   }
 
   // ---- Events -------------------------------------------------------------
@@ -610,7 +813,8 @@
     }
   });
 
-  window.addEventListener('resize', sizeCanvas);
+  window.addEventListener('resize', () => { sizeCanvas(); sizeFx(); });
+  sizeFx();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawWheel);
 
   resetRound();
