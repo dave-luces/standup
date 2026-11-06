@@ -570,7 +570,11 @@
     if (!pool.length) { showSummary(); return; }
     ensureAudio();
     const segs = onWheel();
-    const target = pool[Math.floor(rand() * pool.length)];
+    // Dave never goes first: on the opening spin of a round, pick from everyone else who is here.
+    const opening = !people.some(p => p.status === 'done');
+    const others = pool.filter(p => !p.crown);
+    const choices = opening && others.length ? others : pool;
+    const target = choices[Math.floor(rand() * choices.length)];
     const i = segs.indexOf(target), n = segs.length, seg = TAU / n;
     const jitter = (rand() - 0.5) * seg * 0.7;
     const desired = -(i + 0.5) * seg + jitter;
