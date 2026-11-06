@@ -73,7 +73,6 @@
     background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%238b9bb6' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 9px center;
   }
   .turn-pick select option { background: #0e1729; color: #eef3fb; }
-  .turn-pick .note { color: var(--faint); font-size: 12px; margin-right: 6px; }
 
   /* Buttons */
   .btn {
@@ -304,7 +303,7 @@
     <h1>Cloud Team Daily Stand Up</h1>
   </div>
   <div class="header-actions">
-    <label class="turn-pick" title="Turn length for everyone except Dave">Turn <select id="turnSel" aria-label="Turn length for everyone except Dave"></select><span class="note">(Dave: 1 hr 👑)</span></label>
+    <label class="turn-pick" title="Turn length for everyone except Dave">Turn <select id="turnSel" aria-label="Turn length for everyone except Dave"></select></label>
     <button class="btn btn-ghost btn-small" id="soundBtn" aria-pressed="true">Sound: on</button>
     <button class="btn btn-ghost btn-small" id="newRoundBtn">New round</button>
   </div>
