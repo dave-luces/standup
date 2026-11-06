@@ -58,7 +58,22 @@
   .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--brand-hi); }
   h1 { margin: 2px 0 0; font-size: 22px; font-weight: 700; letter-spacing: -.015em; }
   .date { color: var(--muted); font-weight: 500; }
-  .header-actions { margin-left: auto; display: flex; gap: 10px; }
+  .header-actions { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+  .turn-pick {
+    display: flex; align-items: center; gap: 4px; height: 35px;
+    padding: 0 2px 0 12px; border: 1px solid var(--line); border-radius: 11px;
+    font-size: 13px; font-weight: 500; color: var(--muted); background: rgba(255,255,255,.03);
+    transition: border-color .2s, background .2s;
+  }
+  .turn-pick:hover, .turn-pick:focus-within { border-color: rgba(255,255,255,.22); background: rgba(255,255,255,.06); }
+  .turn-pick select {
+    -webkit-appearance: none; appearance: none; cursor: pointer;
+    border: 0; outline: 0; font: inherit; font-weight: 700; color: var(--text);
+    padding: 8px 26px 8px 4px;
+    background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%238b9bb6' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 9px center;
+  }
+  .turn-pick select option { background: #0e1729; color: #eef3fb; }
+  .turn-pick .note { color: var(--faint); font-size: 12px; margin-right: 6px; }
 
   /* Buttons */
   .btn {
@@ -289,6 +304,7 @@
     <h1>Cloud Team Daily Stand Up</h1>
   </div>
   <div class="header-actions">
+    <label class="turn-pick" title="Turn length for everyone except Dave">Turn <select id="turnSel" aria-label="Turn length for everyone except Dave"></select><span class="note">(Dave: 1 hr 👑)</span></label>
     <button class="btn btn-ghost btn-small" id="soundBtn" aria-pressed="true">Sound: on</button>
     <button class="btn btn-ghost btn-small" id="newRoundBtn">New round</button>
   </div>
@@ -329,7 +345,7 @@
       </svg>
       <div class="digits">
         <div class="time" id="time">1:00</div>
-        <div class="sub" id="timeSub">1 minute each</div>
+        <div class="sub" id="timeSub">1 min each</div>
       </div>
     </div>
     <div class="controls">
@@ -365,7 +381,13 @@
 <script>
 (() => {
   // ---- Settings -----------------------------------------------------------
-  const TURN_SECONDS = 60;
+  const TURN_OPTIONS = [30, 60, 90, 120, 150, 180, 210, 240, 270, 300];   // 30 seconds to 5 minutes
+  const TURN_KEY = 'eonx-standup.turnSeconds';
+  let TURN_SECONDS = 60;   // default for everyone except Dave
+  try {
+    const saved = parseInt(localStorage.getItem(TURN_KEY), 10);
+    if (TURN_OPTIONS.includes(saved)) TURN_SECONDS = saved;
+  } catch (e) { /* storage blocked: keep default */ }
   const TEAM = [
     { name: 'Dave',     color: '#0CA0E2', seconds: 3600, crown: true },   // the boss gets an hour 👑
     { name: 'Norvylle', color: '#1AE50A' },
@@ -402,7 +424,7 @@
   // ---- Helpers ------------------------------------------------------------
   const waiting = () => people.filter(p => p.status === 'waiting');
   const onWheel = () => people.filter(p => p.status === 'waiting' || p.status === 'speaking');
-  const limit = p => (p && p.seconds) || TURN_SECONDS;
+  const limit = p => (p && (p.max || p.seconds)) || TURN_SECONDS;   // p.max = limit locked in when their turn ended
   const QUIPS = [
     'The wheel has spoken.',
     'You\'re up. No pressure.',
@@ -413,7 +435,7 @@
     'Short and sweet, please.',
     'Mic check, one two.',
     'Fresh off the wheel.',
-    '60 seconds of fame starts now.',
+    'Your moment of fame starts now.',
   ];
   const DAVE_QUIPS = [
     'Gets the full hour. Get comfy, everyone.',
@@ -431,6 +453,11 @@
   function fmt(sec) {
     sec = Math.max(0, Math.floor(sec));
     return Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0');
+  }
+  function turnLabel(sec) {
+    const m = Math.floor(sec / 60), r = sec % 60;
+    if (!m) return r + ' sec';
+    return m + ' min' + (r ? ' ' + r + 's' : '');
   }
   function textOn(hex) {
     const n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
@@ -704,6 +731,7 @@
   function finishCurrent() {
     if (!current) return;
     current.time = elapsed();
+    current.max = limit(current);
     current.status = 'done';
     order.push(current);
     stopTimer();
@@ -757,10 +785,11 @@
       $('ringBar').style.strokeDashoffset = 0;
       if (!timer.beeped) { timer.beeped = true; timesUp(); }
     } else {
-      if (current && left <= CRIT_AT) card.classList.add('crit');
-      else if (current && left <= WARN_AT) card.classList.add('warn');
+      const critAt = Math.min(CRIT_AT, max / 3), warnAt = Math.min(WARN_AT, max / 2);   // scale down for short turns
+      if (current && left <= critAt) card.classList.add('crit');
+      else if (current && left <= warnAt) card.classList.add('warn');
       $('time').textContent = fmt(Math.ceil(left));
-      $('timeSub').textContent = !current ? '1 minute each' : (timer.running ? 'left' : (e > 0 ? 'Paused' : 'Press Start'));
+      $('timeSub').textContent = !current ? turnLabel(TURN_SECONDS) + ' each' : (timer.running ? 'left' : (e > 0 ? 'Paused' : 'Press Start'));
       $('ringBar').style.strokeDashoffset = RING_C * (1 - Math.max(0, left) / max);
     }
     // live time on the speaking chip
@@ -894,6 +923,7 @@
 
   document.addEventListener('keydown', e => {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.target && e.target.tagName === 'SELECT') return;   // let the turn picker use the keyboard
     if ($('overlay').classList.contains('show')) {
       if (e.key === 'Escape') $('overlay').classList.remove('show');
       return;
@@ -905,6 +935,21 @@
       e.preventDefault();
       next();
     }
+  });
+
+  // Turn length picker (never applies to Dave)
+  const sel = $('turnSel');
+  TURN_OPTIONS.forEach(v => {
+    const o = document.createElement('option'); o.value = v; o.textContent = turnLabel(v);
+    sel.append(o);
+  });
+  sel.value = String(TURN_SECONDS);
+  sel.addEventListener('change', () => {
+    TURN_SECONDS = parseInt(sel.value, 10);
+    try { localStorage.setItem(TURN_KEY, String(TURN_SECONDS)); } catch (e) {}
+    if (current && !current.seconds && elapsed() < TURN_SECONDS) timer.beeped = false;
+    render();
+    sel.blur();
   });
 
   window.addEventListener('resize', () => { sizeCanvas(); sizeFx(); });
