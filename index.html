@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EonX Cloud Team Daily Stand Up</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%231192ef'/%3E%3Cpath d='M16 16 L16 4 A12 12 0 0 1 26.4 10 Z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand: #1192ef;
+    --brand-strong: #0062a8;
+    --brand-100: #cfe9fc;
+    --dark: #1a1a1a;
+    --dark-2: #525252;
+    --slate-50: #f8fafc;
+    --slate-100: #f1f5f9;
+    --slate-200: #e2e8f0;
+    --slate-300: #cbd5e1;
+    --slate-500: #64748b;
+    --amber: #f59e0b;
+    --amber-700: #b45309;
+    --red: #e11d2e;
+    --green-700: #047857;
+    --green-50: #ecfdf5;
+    --ring: var(--brand);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    color: var(--dark);
+    background:
+      radial-gradient(1100px 560px at 90% -15%, var(--brand-100) 0%, rgba(207,233,252,0) 65%),
+      var(--slate-50);
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font: inherit; cursor: pointer; }
+  button:disabled { cursor: not-allowed; opacity: .4; }
+
+  header {
+    display: flex; align-items: center; gap: 20px;
+    max-width: 1360px; margin: 0 auto; padding: 18px 32px 14px;
+  }
+  .logo { height: 32px; width: auto; display: block; flex: none; }
+  .divider { width: 1px; height: 34px; background: var(--slate-300); }
+  h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -.01em; }
+  .date { margin-top: 2px; font-size: 14px; color: var(--slate-500); }
+  .header-actions { margin-left: auto; display: flex; gap: 10px; }
+
+  .btn {
+    border: 1px solid transparent; border-radius: 12px;
+    padding: 12px 20px; font-weight: 600; font-size: 16px;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: background .15s, transform .05s, box-shadow .15s;
+  }
+  .btn:active:not(:disabled) { transform: translateY(1px); }
+  .btn-primary { background: var(--brand); color: #fff; box-shadow: 0 4px 14px rgba(17,146,239,.35); }
+  .btn-primary:hover:not(:disabled) { background: var(--brand-strong); }
+  .btn-secondary { background: var(--dark); color: #fff; }
+  .btn-secondary:hover:not(:disabled) { background: #000; }
+  .btn-ghost { background: #fff; color: var(--dark); border-color: var(--slate-200); }
+  .btn-ghost:hover:not(:disabled) { background: var(--slate-100); }
+  .btn-small { padding: 8px 14px; font-size: 14px; border-radius: 10px; }
+
+  main {
+    max-width: 1360px; margin: 0 auto; padding: 4px 32px 28px;
+    display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    grid-template-areas: "wheel timer" "team team";
+    gap: 22px;
+  }
+  .card {
+    background: #fff; border: 1px solid var(--slate-200); border-radius: 20px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 10px 28px rgba(15,23,42,.06);
+  }
+
+  /* Wheel */
+  .wheel-card { grid-area: wheel; display: flex; align-items: center; justify-content: center; padding: 26px; }
+  .wheel-wrap { position: relative; width: min(100%, 60vh); aspect-ratio: 1; }
+  .wheel-wrap canvas { width: 100%; height: 100%; display: block; }
+  .pointer {
+    position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+    width: 0; height: 0; z-index: 2;
+    border-left: 17px solid transparent; border-right: 17px solid transparent;
+    border-top: 32px solid var(--dark);
+    filter: drop-shadow(0 3px 3px rgba(0,0,0,.25));
+  }
+  .hub {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: 24%; aspect-ratio: 1; border-radius: 50%;
+    background: #fff; border: 6px solid var(--brand); color: var(--brand-strong);
+    font-weight: 800; font-size: clamp(14px, 2.3vh, 22px); letter-spacing: .08em;
+    box-shadow: 0 6px 18px rgba(0,0,0,.18);
+    transition: transform .15s, background .15s;
+  }
+  .hub:hover:not(:disabled) { transform: translate(-50%, -50%) scale(1.04); background: var(--brand-100); }
+  .hub:disabled { opacity: 1; color: var(--slate-300); border-color: var(--slate-200); }
+
+  /* Timer */
+  .timer-card { grid-area: timer; padding: 26px 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .label { font-size: 13px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--slate-500); }
+  .speaker { margin-top: 6px; font-size: clamp(30px, 5vh, 46px); font-weight: 800; letter-spacing: -.02em; min-height: 1.25em; display: flex; align-items: center; gap: 14px; }
+  .speaker .dot { width: .5em; height: .5em; border-radius: 50%; flex: none; }
+  .speaker.muted { color: var(--slate-300); font-weight: 600; font-size: clamp(20px, 3vh, 26px); }
+  .speaker.pop { animation: pop .45s ease-out; }
+  @keyframes pop { 0% { transform: scale(.6); opacity: 0; } 70% { transform: scale(1.08); opacity: 1; } 100% { transform: scale(1); } }
+
+  .ring-wrap { position: relative; width: clamp(200px, 36vh, 330px); aspect-ratio: 1; margin: 16px 0 20px; }
+  .ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .ring-track { fill: none; stroke: var(--slate-100); stroke-width: 12; }
+  .ring-bar { fill: none; stroke: var(--ring); stroke-width: 12; stroke-linecap: round; transition: stroke-dashoffset .12s linear, stroke .3s; }
+  .digits {
+    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .digits .time { font-size: clamp(48px, 9vh, 88px); font-weight: 800; letter-spacing: -.03em; line-height: 1; color: var(--dark); transition: color .3s; }
+  .digits .sub { margin-top: 8px; font-size: 14px; font-weight: 600; color: var(--slate-500); }
+  .warn  { --ring: var(--amber); }
+  .warn .digits .time { color: var(--amber-700); }
+  .crit  { --ring: var(--red); }
+  .crit .digits .time { color: var(--red); }
+  .over  { --ring: var(--red); }
+  .over .digits .time { color: var(--red); }
+  .over .ring-bar { animation: blink 1s steps(2, start) infinite; }
+  @keyframes blink { to { stroke-opacity: .35; } }
+
+  .controls { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .controls .btn { min-width: 132px; justify-content: center; }
+  .keys { margin-top: 14px; font-size: 13px; color: var(--slate-500); }
+  kbd {
+    font-family: inherit; font-size: 12px; font-weight: 600;
+    border: 1px solid var(--slate-300); border-bottom-width: 2px; border-radius: 6px;
+    padding: 1px 6px; background: #fff; color: var(--dark-2);
+  }
+
+  /* Team strip */
+  .team-card { grid-area: team; padding: 16px 22px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .team-title { font-size: 13px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--slate-500); }
+  .team-hint { font-size: 13px; color: var(--slate-500); margin-left: auto; }
+  .chips { display: flex; gap: 10px; flex-wrap: wrap; }
+  .chip {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 14px 9px 12px; border-radius: 999px;
+    border: 2px solid var(--slate-200); background: #fff;
+    font-weight: 600; font-size: 15px; color: var(--dark);
+  }
+  .chip .dot { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+  .chip .state { font-weight: 500; font-size: 13px; color: var(--slate-500); font-variant-numeric: tabular-nums; }
+  .chip.speaking { border-color: var(--c); box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 22%, transparent); }
+  .chip.speaking .state { color: var(--dark); font-weight: 600; }
+  .chip.done { background: var(--slate-50); }
+  .chip.done .state { color: var(--green-700); font-weight: 600; }
+  .chip.done.late .state { color: var(--amber-700); }
+  .chip.away { opacity: .5; border-style: dashed; }
+  .chip.away .name { text-decoration: line-through; }
+  .chip:disabled { opacity: 1; cursor: default; }
+  .chip.away:disabled { opacity: .5; }
+  .chip:not(:disabled):hover { border-color: var(--slate-300); background: var(--slate-50); }
+
+  /* Summary */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(15,23,42,.45);
+    display: none; align-items: center; justify-content: center; padding: 24px; z-index: 10;
+    backdrop-filter: blur(3px);
+  }
+  .overlay.show { display: flex; }
+  .summary { width: min(520px, 100%); padding: 30px 32px; }
+  .summary h2 { margin: 0; font-size: 26px; letter-spacing: -.01em; }
+  .summary .total { margin-top: 4px; color: var(--slate-500); font-size: 15px; }
+  .summary ol { list-style: none; padding: 0; margin: 20px 0 24px; }
+  .summary li { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--slate-100); font-size: 17px; }
+  .summary li:last-child { border-bottom: 0; }
+  .summary .n { width: 22px; color: var(--slate-500); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .summary .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .summary .who { font-weight: 600; }
+  .summary .t { margin-left: auto; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .summary .t.late { color: var(--amber-700); }
+  .summary .t.away { color: var(--slate-500); font-weight: 500; }
+  .summary .actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+  @media (max-width: 900px) {
+    header { flex-wrap: wrap; padding: 16px 18px 10px; }
+    .divider { display: none; }
+    .header-actions { margin-left: 0; width: 100%; }
+    main { grid-template-columns: 1fr; grid-template-areas: "wheel" "timer" "team"; padding: 4px 18px 20px; }
+    .wheel-wrap { width: min(100%, 440px); }
+    .team-hint { margin-left: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .speaker.pop, .over .ring-bar { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <svg class="logo" role="img" aria-label="EonX" viewBox="0 0 170 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M7.41519 19.755C7.41519 16.353 8.62762 13.4505 11.0525 11.0474C13.4773 8.6443 16.3955 7.44276 19.807 7.44276C22.6371 7.44276 24.4588 7.75332 25.2721 8.37445L8.35398 25.1705C7.72717 24.342 7.41424 22.5368 7.41519 19.755ZM35.4327 31.8272C36.2849 30.7166 37.4935 28.8944 37.1597 27.1404C36.9907 26.4757 36.745 25.7698 36.0235 25.2202C34.3263 23.9263 31.8565 24.4092 30.6265 26.1419C30.5825 26.203 30.493 26.284 30.4646 26.3166C29.5358 27.4206 28.9203 28.1336 28.6183 28.4555C26.1811 30.8472 23.2459 32.0426 19.8127 32.0417C16.6322 32.0417 14.4393 31.5129 13.234 30.4553L32.2002 11.6482L35.8204 8.02649C34.7287 6.8079 34.0659 6.08357 33.8321 5.85349C33.2734 5.30243 32.7053 4.78545 32.1278 4.30256C28.6046 1.49991 24.4976 0.0981148 19.807 0.097168C14.3532 0.097168 9.68855 2.01689 5.81313 5.85633C1.93771 9.69577 0 14.3287 0 19.755C0 25.1814 1.93771 29.8142 5.81313 33.6537C9.68855 37.4931 14.3532 39.4133 19.807 39.4143C25.2835 39.4143 29.96 37.4941 33.8363 33.6537C34.3948 33.0766 34.9211 32.4692 35.4128 31.8343L35.4327 31.8244" fill="black"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M52.29 11.0622C49.8879 13.4767 48.6873 16.3736 48.6882 19.7528C48.6882 23.1558 49.8888 26.0531 52.29 28.4448C54.6912 30.8366 57.5914 32.032 60.9905 32.031C64.3897 32.031 67.2899 30.8356 69.6911 28.4448C72.0923 26.0541 73.2905 23.1567 73.2858 19.7528C73.2858 16.3745 72.0856 13.4776 69.6854 11.0622C67.2851 8.64685 64.385 7.43962 60.9849 7.44057C57.5847 7.44057 54.6846 8.64779 52.2843 11.0622H52.29ZM60.9905 0.0949711C66.4122 0.0949711 71.0351 2.01469 74.8594 5.85414C78.6837 9.69358 80.5963 14.3265 80.5973 19.7528C80.5973 25.1792 78.6847 29.8126 74.8594 33.6529C71.0342 37.4933 66.4112 39.4131 60.9905 39.4121C55.5935 39.4121 50.9758 37.4924 47.1373 33.6529C43.2988 29.8135 41.381 25.1801 41.3838 19.7528C41.3838 14.3274 43.3016 9.69453 47.1373 5.85414C50.9729 2.01375 55.5907 0.0940242 60.9905 0.0949711Z" fill="black"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M125.103 18.7673C124.926 13.7084 123.027 9.36237 119.408 5.72934C115.601 1.90978 111 0 105.603 0C100.23 0 95.6348 1.90978 91.8162 5.72934C88.4076 9.13797 86.459 13.1147 86.0883 17.776C86.0698 17.9464 86.0883 18.2859 86.0883 18.5302V35.3276C86.0883 35.8166 86.1846 36.3009 86.3717 36.7527C86.5589 37.2045 86.8332 37.615 87.179 37.9608C87.5248 38.3066 87.9353 38.5809 88.3871 38.7681C88.8389 38.9552 89.3232 39.0515 89.8122 39.0515C90.3012 39.0515 90.7855 38.9552 91.2373 38.7681C91.6891 38.5809 92.0996 38.3066 92.4454 37.9608C92.7912 37.615 93.0655 37.2045 93.2527 36.7527C93.4398 36.3009 93.5361 35.8166 93.5361 35.3276V20.1223C93.7108 17.0957 94.7434 13.1218 96.9448 10.9105C99.3336 8.50927 102.222 7.30867 105.608 7.30867C108.995 7.30867 111.883 8.50927 114.272 10.9105C116.471 13.1218 117.656 17.0957 117.831 20.1223H117.855V35.4228C117.846 35.9053 117.933 36.3848 118.111 36.8333C118.289 37.2819 118.554 37.6904 118.892 38.035C119.23 38.3796 119.633 38.6533 120.078 38.8402C120.523 39.0271 121.001 39.1233 121.483 39.1233C121.966 39.1233 122.444 39.0271 122.889 38.8402C123.333 38.6533 123.737 38.3796 124.075 38.035C124.412 37.6904 124.678 37.2819 124.856 36.8333C125.034 36.3848 125.121 35.9053 125.111 35.4228V19.3511C125.11 19.1583 125.093 18.966 125.062 18.7759L125.103 18.7673Z" fill="black"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M153.446 22.3766C153.771 22.0505 154.158 21.7918 154.583 21.6153C155.008 21.4388 155.464 21.3479 155.924 21.3479C156.384 21.3479 156.84 21.4388 157.265 21.6153C157.691 21.7918 158.077 22.0505 158.402 22.3766L168.96 32.9632C169.288 33.2882 169.549 33.6748 169.727 34.1007C169.906 34.5267 169.998 34.9837 170 35.4455C170.001 35.9073 169.911 36.3648 169.736 36.7919C169.56 37.2189 169.302 37.6071 168.976 37.9342C168.65 38.2612 168.262 38.5207 167.836 38.6978C167.409 38.8749 166.952 38.966 166.49 38.966C166.028 38.966 165.571 38.8749 165.145 38.6978C164.718 38.5207 164.331 38.2612 164.005 37.9342L153.446 27.3475C152.789 26.6874 152.42 25.7937 152.42 24.8621C152.42 23.9304 152.789 23.0367 153.446 22.3766Z" fill="#0CA0E2"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M147.747 22.3764C148.08 22.6992 148.345 23.0855 148.525 23.5124C148.706 23.9394 148.799 24.3983 148.799 24.8619C148.799 25.3254 148.706 25.7843 148.525 26.2113C148.345 26.6382 148.08 27.0245 147.747 27.3473L136.884 37.9538C136.2 38.6151 135.286 38.9848 134.335 38.9848C133.384 38.9848 132.47 38.6151 131.786 37.9538C131.453 37.6313 131.188 37.245 131.008 36.818C130.827 36.3911 130.733 35.9321 130.733 35.4684C130.733 35.0047 130.827 34.5457 131.008 34.1187C131.188 33.6917 131.453 33.3055 131.786 32.9829L142.649 22.3764C143.333 21.7157 144.247 21.3464 145.198 21.3464C146.149 21.3464 147.063 21.7157 147.747 22.3764Z" fill="#FF0600"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M153.447 16.7408C154.105 17.3952 154.996 17.7625 155.924 17.7625C156.853 17.7625 157.743 17.3952 158.402 16.7408L168.96 6.24084C169.285 5.91838 169.544 5.53467 169.72 5.11185C169.896 4.68902 169.987 4.23548 169.987 3.77739C169.987 3.31931 169.896 2.86576 169.72 2.44294C169.544 2.02012 169.285 1.6364 168.96 1.31395C168.301 0.660258 167.411 0.293457 166.482 0.293457C165.554 0.293457 164.664 0.660258 164.005 1.31395L153.447 11.8154C153.122 12.138 152.864 12.5218 152.688 12.9446C152.512 13.3674 152.421 13.8208 152.421 14.2788C152.421 14.7368 152.512 15.1902 152.688 15.613C152.864 16.0358 153.122 16.4196 153.447 16.7423" fill="#1AE50A"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M147.747 16.7595C148.08 16.4368 148.344 16.0504 148.525 15.6235C148.706 15.1966 148.799 14.7377 148.799 14.2741C148.799 13.8105 148.706 13.3516 148.525 12.9247C148.344 12.4977 148.08 12.1114 147.747 11.7886L136.883 1.17357C136.2 0.512272 135.286 0.142578 134.335 0.142578C133.384 0.142578 132.47 0.512272 131.786 1.17357C131.452 1.49625 131.186 1.88294 131.005 2.31057C130.823 2.7382 130.729 3.19801 130.729 3.66258C130.729 4.12715 130.823 4.58697 131.005 5.0146C131.186 5.44223 131.452 5.82891 131.786 6.1516L142.648 16.7595C143.333 17.4203 144.247 17.7896 145.198 17.7896C146.149 17.7896 147.063 17.4203 147.747 16.7595Z" fill="#FF9515"/>
+</svg>
+  <div class="divider" aria-hidden="true"></div>
+  <div>
+    <h1>Cloud Team Daily Stand Up</h1>
+    <div class="date" id="date"></div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-ghost btn-small" id="soundBtn" aria-pressed="true">Sound: on</button>
+    <button class="btn btn-ghost btn-small" id="newRoundBtn">New round</button>
+  </div>
+</header>
+
+<main>
+  <section class="card wheel-card" aria-label="Spin the wheel">
+    <div class="wheel-wrap">
+      <div class="pointer" aria-hidden="true"></div>
+      <canvas id="wheel" aria-hidden="true"></canvas>
+      <button class="hub" id="hubBtn">SPIN</button>
+    </div>
+  </section>
+
+  <section class="card timer-card" id="timerCard" aria-label="Timer">
+    <div class="label" id="speakerLabel">Up now</div>
+    <div class="speaker muted" id="speaker" aria-live="polite">Spin the wheel to start</div>
+    <div class="ring-wrap">
+      <svg viewBox="0 0 200 200" aria-hidden="true">
+        <circle class="ring-track" cx="100" cy="100" r="88"></circle>
+        <circle class="ring-bar" id="ringBar" cx="100" cy="100" r="88"></circle>
+      </svg>
+      <div class="digits">
+        <div class="time" id="time">1:30</div>
+        <div class="sub" id="timeSub">90 seconds each</div>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="btn btn-primary" id="startBtn" disabled>Start</button>
+      <button class="btn btn-secondary" id="nextBtn" disabled>Next</button>
+      <button class="btn btn-ghost" id="restartBtn" disabled title="Put this person's timer back to 1:30">Restart</button>
+    </div>
+    <div class="keys"><kbd>Space</kbd> spin / start / pause &nbsp;·&nbsp; <kbd>N</kbd> next</div>
+  </section>
+
+  <section class="card team-card" aria-label="Team">
+    <div class="team-title">Team</div>
+    <div class="chips" id="chips"></div>
+    <div class="team-hint">Click a name to mark them away today</div>
+  </section>
+</main>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="sumTitle">
+  <div class="card summary">
+    <h2 id="sumTitle">Stand up done</h2>
+    <div class="total" id="sumTotal"></div>
+    <ol id="sumList"></ol>
+    <div class="actions">
+      <button class="btn btn-ghost" id="closeSumBtn">Close</button>
+      <button class="btn btn-primary" id="againBtn">New round</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  // ---- Settings -----------------------------------------------------------
+  const TURN_SECONDS = 90;
+  const TEAM = [
+    { name: 'Dave',     color: '#0CA0E2' },
+    { name: 'Norvylle', color: '#1AE50A' },
+    { name: 'Jack',     color: '#FF9515' },
+    { name: 'Harry',    color: '#FF0600' },
+    { name: 'Bry',      color: '#887AF9' },
+  ];
+  const WARN_AT = 30;   // amber from 0:30 left
+  const CRIT_AT = 10;   // red from 0:10 left
+  const SPIN_MS = 4800;
+
+  // ---- State --------------------------------------------------------------
+  const TAU = Math.PI * 2;
+  let people, current, order, rotation = 0, spinning = false;
+  let timer = { running: false, before: 0, startedAt: 0, beeped: false };
+  let soundOn = true, audio = null, tickHandle = null;
+
+  const $ = id => document.getElementById(id);
+  const canvas = $('wheel'), ctx = canvas.getContext('2d');
+  const RING_C = 2 * Math.PI * 88;
+  $('ringBar').style.strokeDasharray = RING_C;
+
+  $('date').textContent = new Date().toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+  function resetRound() {
+    people = TEAM.map(p => ({ ...p, status: 'waiting', time: null, away: people ? (people.find(q => q.name === p.name) || {}).away : false }));
+    people.forEach(p => { if (p.away) p.status = 'away'; });
+    current = null; order = [];
+    stopTimer(); timer = { running: false, before: 0, startedAt: 0, beeped: false };
+    $('overlay').classList.remove('show');
+    render();
+  }
+
+  // ---- Helpers ------------------------------------------------------------
+  const waiting = () => people.filter(p => p.status === 'waiting');
+  const onWheel = () => people.filter(p => p.status === 'waiting' || p.status === 'speaking');
+  const elapsed = () => timer.before + (timer.running ? (performance.now() - timer.startedAt) / 1000 : 0);
+  function fmt(sec) {
+    sec = Math.max(0, Math.floor(sec));
+    return Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0');
+  }
+  function textOn(hex) {
+    const n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+    const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return lum > 0.6 ? '#1a1a1a' : '#ffffff';
+  }
+  function rand() {
+    const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] / 4294967296;
+  }
+
+  // ---- Sound --------------------------------------------------------------
+  function ensureAudio() {
+    if (!audio) { try { audio = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { audio = null; } }
+    if (audio && audio.state === 'suspended') audio.resume();
+  }
+  function tone(freq, start, dur, vol = 0.18, type = 'sine') {
+    if (!soundOn || !audio) return;
+    const t = audio.currentTime + start;
+    const o = audio.createOscillator(), g = audio.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(audio.destination);
+    o.start(t); o.stop(t + dur + 0.02);
+  }
+  const tick = () => tone(1400, 0, 0.03, 0.06, 'square');
+  const landed = () => { tone(660, 0, 0.12); tone(990, 0.1, 0.22); };
+  const timesUp = () => { tone(880, 0, 0.18, 0.25); tone(880, 0.28, 0.18, 0.25); tone(880, 0.56, 0.35, 0.25); };
+
+  // ---- Wheel --------------------------------------------------------------
+  function sizeCanvas() {
+    const dpr = window.devicePixelRatio || 1;
+    const w = canvas.clientWidth;
+    canvas.width = Math.round(w * dpr); canvas.height = Math.round(w * dpr);
+    drawWheel();
+  }
+  function drawWheel() {
+    const W = canvas.width, c = W / 2, dpr = W / (canvas.clientWidth || 1);
+    const r = c - 6 * dpr;
+    ctx.clearRect(0, 0, W, W);
+    const segs = onWheel();
+
+    if (!segs.length) {
+      ctx.beginPath(); ctx.arc(c, c, r, 0, TAU); ctx.fillStyle = '#f1f5f9'; ctx.fill();
+      return;
+    }
+    const seg = TAU / segs.length;
+    ctx.save(); ctx.translate(c, c); ctx.rotate(rotation);
+    segs.forEach((p, i) => {
+      const a0 = -Math.PI / 2 + i * seg, a1 = a0 + seg;
+      const dim = current && p !== current;
+      ctx.globalAlpha = dim ? 0.28 : 1;
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, r, a0, a1); ctx.closePath();
+      ctx.fillStyle = p.color; ctx.fill();
+      if (segs.length > 1) { ctx.lineWidth = 4 * dpr; ctx.strokeStyle = '#ffffff'; ctx.stroke(); }
+      ctx.save();
+      ctx.rotate(a0 + seg / 2);
+      ctx.fillStyle = textOn(p.color);
+      ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+      const fs = Math.max(14, Math.min(38, r * 0.12)) ;
+      ctx.font = `800 ${fs}px Inter, -apple-system, system-ui, sans-serif`;
+      ctx.fillText(p.name, r - r * 0.1, 0);
+      ctx.restore();
+    });
+    ctx.restore();
+    ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.arc(c, c, r, 0, TAU);
+    ctx.lineWidth = 6 * dpr; ctx.strokeStyle = '#e2e8f0'; ctx.stroke();
+  }
+  function indexAtPointer(rot, n) {
+    const seg = TAU / n;
+    const a = ((-rot) % TAU + TAU) % TAU;
+    return Math.floor(a / seg) % n;
+  }
+
+  function spin() {
+    if (spinning || current) return;
+    const pool = waiting();
+    if (!pool.length) { showSummary(); return; }
+    ensureAudio();
+    const segs = onWheel();
+    const target = pool[Math.floor(rand() * pool.length)];
+    const i = segs.indexOf(target), n = segs.length, seg = TAU / n;
+    const jitter = (rand() - 0.5) * seg * 0.7;
+    const desired = -(i + 0.5) * seg + jitter;
+    const delta = ((desired - rotation) % TAU + TAU) % TAU;
+    const from = rotation, to = rotation + delta + TAU * (5 + Math.floor(rand() * 2));
+    const t0 = performance.now();
+    let lastIdx = indexAtPointer(from, n);
+    spinning = true;
+    $('speaker').className = 'speaker muted';
+    $('speaker').textContent = 'Spinning…';
+    render();
+    (function frame() {
+      const t = Math.min(1, (performance.now() - t0) / SPIN_MS);
+      const e = 1 - Math.pow(1 - t, 4);
+      rotation = from + (to - from) * e;
+      const idx = indexAtPointer(rotation, n);
+      if (idx !== lastIdx) { tick(); lastIdx = idx; }
+      drawWheel();
+      if (t < 1) requestAnimationFrame(frame);
+      else {
+        rotation = to % TAU; spinning = false;
+        landed();
+        select(target);
+      }
+    })();
+  }
+
+  // ---- Turns --------------------------------------------------------------
+  function select(p) {
+    current = p; p.status = 'speaking';
+    timer = { running: false, before: 0, startedAt: 0, beeped: false };
+    const sp = $('speaker');
+    sp.className = 'speaker';
+    sp.innerHTML = '';
+    const dot = document.createElement('span'); dot.className = 'dot'; dot.style.background = p.color;
+    sp.append(dot, document.createTextNode(p.name));
+    void sp.offsetWidth; sp.classList.add('pop');
+    render();
+  }
+  function finishCurrent() {
+    if (!current) return;
+    current.time = elapsed();
+    current.status = 'done';
+    order.push(current);
+    stopTimer();
+    current = null;
+  }
+  function next() {
+    if (spinning) return;
+    if (!current) { spin(); return; }
+    finishCurrent();
+    if (waiting().length) { render(); setTimeout(spin, 350); }
+    else { render(); showSummary(); }
+  }
+
+  // ---- Timer --------------------------------------------------------------
+  function startTimer() {
+    if (!current || timer.running) return;
+    ensureAudio();
+    timer.running = true; timer.startedAt = performance.now();
+    tickHandle = setInterval(updateTimer, 100);
+    render();
+  }
+  function pauseTimer() {
+    if (!timer.running) return;
+    timer.before = elapsed(); timer.running = false;
+    clearInterval(tickHandle); tickHandle = null;
+    render();
+  }
+  function stopTimer() {
+    if (timer.running) timer.before = elapsed();
+    timer.running = false;
+    clearInterval(tickHandle); tickHandle = null;
+  }
+  function restartTimer() {
+    if (!current) return;
+    stopTimer();
+    timer = { running: false, before: 0, startedAt: 0, beeped: false };
+    render();
+  }
+  function toggleTimer() { timer.running ? pauseTimer() : startTimer(); }
+
+  function updateTimer() {
+    const card = $('timerCard');
+    const e = current ? elapsed() : 0;
+    const left = TURN_SECONDS - e;
+    card.classList.remove('warn', 'crit', 'over');
+    if (current && left <= 0) {
+      card.classList.add('over');
+      $('time').textContent = '+' + fmt(-left);
+      $('timeSub').textContent = "Time's up";
+      $('ringBar').style.strokeDashoffset = 0;
+      if (!timer.beeped) { timer.beeped = true; timesUp(); }
+    } else {
+      if (current && left <= CRIT_AT) card.classList.add('crit');
+      else if (current && left <= WARN_AT) card.classList.add('warn');
+      $('time').textContent = fmt(Math.ceil(left));
+      $('timeSub').textContent = !current ? '90 seconds each' : (timer.running ? 'left' : (e > 0 ? 'Paused' : 'Press Start'));
+      $('ringBar').style.strokeDashoffset = RING_C * (1 - Math.max(0, left) / TURN_SECONDS);
+    }
+    // live time on the speaking chip
+    const chip = document.querySelector('.chip.speaking .state');
+    if (chip) chip.textContent = 'Speaking · ' + fmt(e);
+  }
+
+  // ---- Render -------------------------------------------------------------
+  function render() {
+    const pool = waiting();
+    const allDone = !current && !pool.length && order.length > 0;
+
+    // header label
+    $('speakerLabel').textContent = current ? 'Up now' : (spinning ? 'Picking…' : (order.length ? 'Next' : 'Up first'));
+    if (!current && !spinning) {
+      $('speaker').className = 'speaker muted';
+      $('speaker').textContent = allDone ? 'Everyone has been' : (pool.length ? 'Spin the wheel' : 'Nobody here today');
+    }
+
+    // buttons
+    $('hubBtn').disabled = spinning || !!current || !pool.length;
+    $('hubBtn').textContent = 'SPIN';
+    $('startBtn').disabled = !current || spinning;
+    $('startBtn').textContent = timer.running ? 'Pause' : (current && elapsed() > 0 ? 'Resume' : 'Start');
+    $('nextBtn').disabled = spinning || !current;
+    $('nextBtn').textContent = current && !pool.length ? 'Finish' : 'Next';
+    $('restartBtn').disabled = !current || spinning;
+
+    // chips
+    const chips = $('chips'); chips.innerHTML = '';
+    people.forEach(p => {
+      const b = document.createElement('button');
+      b.className = 'chip ' + p.status;
+      b.style.setProperty('--c', p.color);
+      let state = 'Waiting';
+      if (p.status === 'away') state = 'Away';
+      if (p.status === 'speaking') state = 'Speaking · ' + fmt(elapsed());
+      if (p.status === 'done') {
+        state = fmt(p.time);
+        if (p.time > TURN_SECONDS) { b.classList.add('late'); state += ' (+' + fmt(p.time - TURN_SECONDS) + ')'; }
+        else state = '✓ ' + state;
+      }
+      const dot = document.createElement('span'); dot.className = 'dot'; dot.style.background = p.color;
+      const nm = document.createElement('span'); nm.className = 'name'; nm.textContent = p.name;
+      const st = document.createElement('span'); st.className = 'state'; st.textContent = state;
+      b.append(dot, nm, st);
+      b.disabled = spinning || !(p.status === 'waiting' || p.status === 'away');
+      b.title = p.status === 'away' ? 'Mark ' + p.name + ' as here' : (p.status === 'waiting' ? 'Mark ' + p.name + ' as away today' : '');
+      b.addEventListener('click', () => {
+        if (spinning) return;
+        if (p.status === 'waiting') { p.status = 'away'; p.away = true; }
+        else if (p.status === 'away') { p.status = 'waiting'; p.away = false; }
+        render();
+        b.blur();
+      });
+      chips.append(b);
+    });
+
+    updateTimer();
+    drawWheel();
+  }
+
+  // ---- Summary ------------------------------------------------------------
+  function showSummary() {
+    const list = $('sumList'); list.innerHTML = '';
+    let total = 0;
+    order.forEach((p, i) => {
+      total += p.time;
+      const li = document.createElement('li');
+      const late = p.time > TURN_SECONDS;
+      li.innerHTML = `<span class="n">${i + 1}</span><span class="dot" style="background:${p.color}"></span><span class="who"></span><span class="t${late ? ' late' : ''}">${fmt(p.time)}${late ? ' (+' + fmt(p.time - TURN_SECONDS) + ')' : ''}</span>`;
+      li.querySelector('.who').textContent = p.name;
+      list.append(li);
+    });
+    people.filter(p => p.status === 'away').forEach(p => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="n">–</span><span class="dot" style="background:${p.color};opacity:.4"></span><span class="who"></span><span class="t away">Away</span>`;
+      li.querySelector('.who').textContent = p.name;
+      list.append(li);
+    });
+    const over = order.filter(p => p.time > TURN_SECONDS).length;
+    $('sumTotal').textContent = `Total talk time ${fmt(total)}` + (over ? ` · ${over} went over 1:30` : ' · everyone kept to time');
+    $('overlay').classList.add('show');
+    $('againBtn').focus();
+  }
+
+  // ---- Events -------------------------------------------------------------
+  const clickBlur = (id, fn) => $(id).addEventListener('click', e => { fn(); e.currentTarget.blur(); });
+  clickBlur('hubBtn', spin);
+  clickBlur('startBtn', toggleTimer);
+  clickBlur('nextBtn', next);
+  clickBlur('restartBtn', restartTimer);
+  clickBlur('againBtn', resetRound);
+  clickBlur('closeSumBtn', () => $('overlay').classList.remove('show'));
+  clickBlur('newRoundBtn', () => {
+    if ((order.length || current) && !confirm('Start a new round? This clears today\'s turns.')) return;
+    resetRound();
+  });
+  clickBlur('soundBtn', () => {
+    soundOn = !soundOn;
+    $('soundBtn').textContent = 'Sound: ' + (soundOn ? 'on' : 'off');
+    $('soundBtn').setAttribute('aria-pressed', String(soundOn));
+    if (soundOn) ensureAudio();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if ($('overlay').classList.contains('show')) {
+      if (e.key === 'Escape') $('overlay').classList.remove('show');
+      return;
+    }
+    if (e.code === 'Space') {
+      e.preventDefault();
+      if (current) toggleTimer(); else spin();
+    } else if (e.key === 'n' || e.key === 'N') {
+      e.preventDefault();
+      next();
+    }
+  });
+
+  window.addEventListener('resize', sizeCanvas);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawWheel);
+
+  resetRound();
+  sizeCanvas();
+})();
+</script>
+</body>
+</html>
