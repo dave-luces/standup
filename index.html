@@ -734,8 +734,9 @@
   }
   function finishCurrent() {
     if (!current) return;
-    current.time = elapsed();
     current.max = limit(current);
+    current.timesUp = elapsed() >= current.max;
+    current.time = Math.min(elapsed(), current.max);   // the clock stops at the limit, so overtime is never counted
     current.status = 'done';
     order.push(current);
     stopTimer();
@@ -830,11 +831,10 @@
       b.style.setProperty('--c', p.color);
       let state = 'Waiting';
       if (p.status === 'away') state = 'Away';
-      if (p.status === 'speaking') state = 'Speaking · ' + fmt(elapsed());
+      if (p.status === 'speaking') state = 'Speaking · ' + fmt(Math.min(elapsed(), limit(p)));
       if (p.status === 'done') {
-        state = fmt(p.time);
-        if (p.time > limit(p)) { b.classList.add('late'); state += ' (+' + fmt(p.time - limit(p)) + ')'; }
-        else state = '✓ ' + state;
+        if (p.timesUp) { b.classList.add('late'); state = fmt(p.time) + " · Time's up"; }
+        else state = '✓ ' + fmt(p.time);
       }
       const av = document.createElement('span'); av.className = 'av';
       av.style.background = `linear-gradient(160deg, ${shade(p.color, 0.25)}, ${shade(p.color, -0.15)})`;
@@ -866,8 +866,8 @@
     order.forEach((p, i) => {
       total += p.time;
       const li = document.createElement('li');
-      const late = p.time > limit(p);
-      li.innerHTML = `<span class="n">${i + 1}</span><span class="dot" style="background:${p.color}"></span><span class="who"></span><span class="t${late ? ' late' : ''}">${fmt(p.time)}${late ? ' (+' + fmt(p.time - limit(p)) + ')' : ''}</span>`;
+      const late = p.timesUp;
+      li.innerHTML = `<span class="n">${i + 1}</span><span class="dot" style="background:${p.color}"></span><span class="who"></span><span class="t${late ? ' late' : ''}">${fmt(p.time)}${late ? " · Time's up" : ''}</span>`;
       li.querySelector('.who').textContent = p.name;
       list.append(li);
     });
@@ -877,17 +877,14 @@
       li.querySelector('.who').textContent = p.name;
       list.append(li);
     });
-    const over = order.filter(p => p.time > limit(p)).length;
-    $('sumTotal').textContent = `Total talk time ${fmt(total)}` + (over ? ` · ${over} went over time` : ' · everyone kept to time');
+    const over = order.filter(p => p.timesUp).length;
+    $('sumTotal').textContent = `Total talk time ${fmt(total)}` + (over ? ` · ${over} ran out of time` : ' · everyone kept to time');
 
     // Awards
     const aw = $('awards'); aw.innerHTML = '';
     if (order.length >= 2) {
       const fastest = order.reduce((a, b) => (b.time < a.time ? b : a));
-      const overs = order.filter(p => p.time > limit(p));
-      const talker = overs.length
-        ? overs.reduce((a, b) => (b.time - limit(b) > a.time - limit(a) ? b : a))
-        : order.reduce((a, b) => (b.time > a.time ? b : a));
+      const talker = order.reduce((a, b) => (b.time > a.time ? b : a));
       const award = (icon, title, p, note, accent) => {
         const d = document.createElement('div'); d.className = 'award';
         d.style.setProperty('--a', accent);
@@ -897,7 +894,7 @@
       };
       award('⚡', 'Speed Run', fastest, fmt(fastest.time), '#4fd1ff');
       if (talker !== fastest) {
-        award('🎤', 'Filibuster', talker, talker.time > limit(talker) ? '+' + fmt(talker.time - limit(talker)) + ' over' : fmt(talker.time), '#c084fc');
+        award('🎤', 'Filibuster', talker, fmt(talker.time) + (talker.timesUp ? " · Time's up" : ''), '#c084fc');
       }
     }
 
